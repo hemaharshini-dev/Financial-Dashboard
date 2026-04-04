@@ -20,7 +20,7 @@ export default function SpendingBreakdown() {
               <Cell key={entry.name} fill={CATEGORY_COLORS[entry.name] || '#6b7280'} />
             ))}
           </Pie>
-          <Tooltip formatter={(v) => [`$${v.toLocaleString()}`, '']} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+          <Tooltip formatter={(v) => [`₹${v.toLocaleString('en-IN')}`, '']} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
           <Legend iconType="circle" iconSize={8} formatter={(v) => <span style={{ fontSize: 12, color: '#6b7280' }}>{v}</span>} />
         </PieChart>
       </ResponsiveContainer>

@@ -8,9 +8,11 @@
     <title>FinDash — Financial Dashboard</title>
     <script>
       try {
-        if (JSON.parse(localStorage.getItem('fd_dark'))) {
-          document.documentElement.classList.add('dark');
-        }
+        const saved = localStorage.getItem('fd_dark');
+        const prefersDark = saved !== null
+          ? JSON.parse(saved)
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDark) document.documentElement.classList.add('dark');
       } catch (e) {}
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

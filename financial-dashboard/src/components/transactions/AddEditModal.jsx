@@ -16,6 +16,12 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
     setErrors({});
   }, [transaction, isOpen]);
 
+  useEffect(() => {
+    const handleEsc = (e) => { if (e.key === 'Escape') onClose(); };
+    if (isOpen) document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
+
   const validate = () => {
     const e = {};
     if (!form.date) e.date = 'Required';
@@ -63,7 +69,7 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
             <form onSubmit={handleSubmit} className="space-y-4">
               {field('Date', 'date', 'date')}
               {field('Description', 'description')}
-              {field('Amount ($)', 'amount', 'number')}
+              {field('Amount (₹)', 'amount', 'number')}
               <div>
                 <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Category</label>
                 <select value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}

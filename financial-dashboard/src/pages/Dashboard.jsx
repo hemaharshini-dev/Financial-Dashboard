@@ -12,10 +12,10 @@ import { format } from 'date-fns';
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const { transactions } = useTransactionStore();
-  const thisMonth = format(new Date(), 'yyyy-MM');
+  const { topCategory, latestMonth } = useInsights();
+  const thisMonth = latestMonth || format(new Date(), 'yyyy-MM');
   const thisMonthExpenses = transactions.filter((t) => t.type === 'expense' && t.date.startsWith(thisMonth));
   const largest = [...thisMonthExpenses].sort((a, b) => b.amount - a.amount)[0];
-  const { topCategory } = useInsights();
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 800);

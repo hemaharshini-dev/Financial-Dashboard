@@ -4,6 +4,7 @@ import { Wallet, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { useInsights } from '../../hooks/useInsights';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { format } from 'date-fns';
 
 function useCountUp(target, duration = 1200) {
   const [value, setValue] = useState(0);

@@ -4,6 +4,7 @@ import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Insights from './pages/Insights';
+import { ToastProvider } from './components/ui/Toast';
 
 const pages = { dashboard: Dashboard, transactions: Transactions, insights: Insights };
 
@@ -18,8 +19,10 @@ export default function App() {
   const Page = pages[activePage];
 
   return (
-    <Layout activePage={activePage} setActivePage={setActivePage}>
-      <Page />
-    </Layout>
+    <ToastProvider>
+      <Layout activePage={activePage} setActivePage={setActivePage}>
+        <Page />
+      </Layout>
+    </ToastProvider>
   );
 }

@@ -1,11 +1,19 @@
+import { useState, useEffect } from 'react';
 import { useFilteredTransactions } from '../../hooks/useFilteredTransactions';
 import { useAppStore } from '../../store/useAppStore';
 import TransactionRow from './TransactionRow';
 import EmptyState from '../ui/EmptyState';
+import { SkeletonRow } from '../ui/Skeleton';
 
 export default function TransactionTable({ onEdit }) {
   const transactions = useFilteredTransactions();
   const { role } = useAppStore();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
@@ -20,15 +28,16 @@ export default function TransactionTable({ onEdit }) {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((t) => (
-              <TransactionRow key={t.id} transaction={t} onEdit={onEdit} />
-            ))}
+            {loading
+              ? [...Array(6)].map((_, i) => <SkeletonRow key={i} />)
+              : transactions.map((t) => <TransactionRow key={t.id} transaction={t} onEdit={onEdit} />)
+            }
           </tbody>
         </table>
-        {transactions.length === 0 && <EmptyState />}
+        {!loading && transactions.length === 0 && <EmptyState />}
       </div>
       <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-400">
-        {transactions.length} transaction{transactions.length !== 1 ? 's' : ''}
+        {loading ? 'Loading...' : `${transactions.length} transaction${transactions.length !== 1 ? 's' : ''}`}
       </div>
     </div>
   );

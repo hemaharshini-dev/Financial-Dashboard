@@ -36,8 +36,8 @@ export const useInsights = () => {
     // Savings rate (this month)
     const savingsRate = thisMonthIncome > 0 ? Math.round(((thisMonthIncome - thisMonthExpenses) / thisMonthIncome) * 100) : 0;
 
-    // Spending streak: days since last expense > $100
-    const largeExpenses = expenses.filter((t) => t.amount > 100).sort((a, b) => b.date.localeCompare(a.date));
+    // Spending streak: days since last expense > ₹2000
+    const largeExpenses = expenses.filter((t) => t.amount > 2000).sort((a, b) => b.date.localeCompare(a.date));
     const spendingStreak = largeExpenses.length
       ? differenceInDays(now, parseISO(largeExpenses[0].date))
       : null;

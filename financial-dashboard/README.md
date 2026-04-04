@@ -1,6 +1,6 @@
 # FinDash — Financial Dashboard
 
-A clean, interactive financial dashboard built with React + Vite. Track transactions, visualize spending patterns, and switch between Viewer and Admin roles — with dark mode, animations, and localStorage persistence.
+A clean, interactive financial dashboard built with React + Vite. Track transactions, visualize spending patterns, and switch between Viewer and Admin roles — with dark mode, animations, and localStorage persistence. All amounts are in Indian Rupees (₹).
 
 ---
 
@@ -89,6 +89,8 @@ Use the **Viewer / Admin** toggle in the top-right header. Switching roles:
 
 60 transactions spanning January–June 2025 across 8 categories:
 `Food`, `Transport`, `Shopping`, `Entertainment`, `Health`, `Utilities`, `Salary`, `Freelance`
+
+All amounts are in Indian Rupees (₹) with realistic Indian pricing (e.g. ₹65,000 salary, ₹999 internet bill, ₹649 Netflix, ₹1,500 petrol). Merchant names reflect Indian context (Ola, Rapido, PVR, Wonderla, Barbeque Nation, etc.).
 
 ---
 

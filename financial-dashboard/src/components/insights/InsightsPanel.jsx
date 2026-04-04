@@ -26,7 +26,7 @@ export default function InsightsPanel() {
             <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
               {spendingStreak !== null ? spendingStreak : '—'}
             </p>
-            <p className="text-xs text-gray-400">days since last expense over $100</p>
+            <p className="text-xs text-gray-400">days since last expense over ₹2,000</p>
           </div>
         </motion.div>
       </div>

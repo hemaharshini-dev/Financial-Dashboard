@@ -4,7 +4,6 @@ import { Wallet, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { useInsights } from '../../hooks/useInsights';
 import { formatCurrency } from '../../utils/formatCurrency';
-import { format } from 'date-fns';
 
 function useCountUp(target, duration = 1200) {
   const [value, setValue] = useState(0);
@@ -21,7 +20,7 @@ function useCountUp(target, duration = 1200) {
   return value;
 }
 
-function SummaryCard({ title, value, icon: Icon, color, prefix = '$' }) {
+function SummaryCard({ title, value, icon: Icon, color, isCurrency = true, suffix = '' }) {
   const animated = useCountUp(value);
   return (
     <motion.div
@@ -37,7 +36,7 @@ function SummaryCard({ title, value, icon: Icon, color, prefix = '$' }) {
         </div>
       </div>
       <p className="text-2xl font-bold text-gray-900 dark:text-white">
-        {prefix}{animated.toLocaleString()}
+        {isCurrency ? formatCurrency(animated) : `${animated.toLocaleString('en-IN')}${suffix}`}
       </p>
     </motion.div>
   );
@@ -45,8 +44,8 @@ function SummaryCard({ title, value, icon: Icon, color, prefix = '$' }) {
 
 export default function SummaryCards() {
   const { transactions } = useTransactionStore();
-  const { savingsRate } = useInsights();
-  const thisMonth = format(new Date(), 'yyyy-MM');
+  const { savingsRate, latestMonth } = useInsights();
+  const thisMonth = latestMonth || format(new Date(), 'yyyy-MM');
 
   const totalBalance = transactions.reduce((s, t) => t.type === 'income' ? s + t.amount : s - t.amount, 0);
   const monthlyIncome = transactions.filter((t) => t.type === 'income' && t.date.startsWith(thisMonth)).reduce((s, t) => s + t.amount, 0);
@@ -57,7 +56,7 @@ export default function SummaryCards() {
       <SummaryCard title="Total Balance" value={Math.abs(totalBalance)} icon={Wallet} color="bg-blue-500" />
       <SummaryCard title="Monthly Income" value={monthlyIncome} icon={TrendingUp} color="bg-emerald-500" />
       <SummaryCard title="Monthly Expenses" value={monthlyExpenses} icon={TrendingDown} color="bg-red-500" />
-      <SummaryCard title="Savings Rate" value={savingsRate} icon={PiggyBank} color="bg-purple-500" prefix="" />
+      <SummaryCard title="Savings Rate" value={savingsRate} icon={PiggyBank} color="bg-purple-500" isCurrency={false} suffix="%" />
     </div>
   );
 }

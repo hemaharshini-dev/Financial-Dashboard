@@ -3,6 +3,7 @@ import BalanceTrendChart from '../components/dashboard/BalanceTrendChart';
 import SpendingBreakdown from '../components/dashboard/SpendingBreakdown';
 import RecurringList from '../components/dashboard/RecurringList';
 import NetWorthCard from '../components/dashboard/NetWorthCard';
+import WelcomeBanner from '../components/ui/WelcomeBanner';
 import { InsightsProvider, useInsightsContext } from '../context/InsightsContext';
 import { formatCurrency } from '../utils/formatCurrency';
 import { useTransactionStore } from '../store/useTransactionStore';
@@ -37,6 +38,7 @@ function DashboardContent({ setActivePage }) {
 
   return (
     <div className="space-y-6">
+      <WelcomeBanner />
       {widgets.summaryCards && <SummaryCards />}
       {(widgets.balanceTrend || widgets.spendingBreakdown) && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

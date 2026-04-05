@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Settings, LayoutDashboard, ArrowLeftRight, Lightbulb } from 'lucide-react';
+import { Sun, Moon, Settings, LayoutDashboard, ArrowLeftRight, Lightbulb, HelpCircle } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import RoleSwitcher from '../ui/RoleSwitcher';
 import AlertsPanel from './AlertsPanel';
@@ -20,8 +20,8 @@ const widgetLabels = {
   netWorth: 'Net Worth',
 };
 
-export default function Header({ activePage }) {
-  const { darkMode, toggleDarkMode, widgets, toggleWidget } = useAppStore();
+export default function Header({ activePage, setActivePage }) {
+  const { darkMode, toggleDarkMode, widgets, toggleWidget, openGuide } = useAppStore();
   const [showCustomize, setShowCustomize] = useState(false);
   const customizeRef = useRef(null);
   const { title, Icon: PageIcon } = pageConfig[activePage] || pageConfig.dashboard;
@@ -42,6 +42,13 @@ export default function Header({ activePage }) {
       </div>
       <div className="flex items-center gap-3">
         <AlertsPanel />
+        <button
+          onClick={() => { openGuide(); setActivePage('dashboard'); }}
+          className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          aria-label="Open feature guide"
+        >
+          <HelpCircle size={18} />
+        </button>
         {activePage === 'dashboard' && (
           <div className="relative" ref={customizeRef}>
             <button

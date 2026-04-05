@@ -75,6 +75,7 @@ export default function Transactions() {
               </button>
               <button onClick={openAdd} className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
                 <Plus size={14} /> Add Transaction
+                <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-blue-500 rounded border border-blue-400 leading-none">N</kbd>
               </button>
             </>
           ) : (

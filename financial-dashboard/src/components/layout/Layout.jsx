@@ -7,7 +7,7 @@ export default function Layout({ activePage, setActivePage, children }) {
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 overflow-x-hidden">
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       <div className="flex-1 flex flex-col min-w-0">
-        <Header activePage={activePage} />
+        <Header activePage={activePage} setActivePage={setActivePage} />
         <main className="flex-1 p-4 md:p-6 pb-28 md:pb-6 overflow-auto">
           <AnimatePresence mode="wait">
             <motion.div

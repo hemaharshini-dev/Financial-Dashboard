@@ -46,4 +46,8 @@ export const useAppStore = create((set) => ({
       localStorage.setItem('fd_sidebar', JSON.stringify(next));
       return { sidebarCollapsed: next };
     }),
+
+  showGuide: false,
+  openGuide: () => set({ showGuide: true }),
+  closeGuide: () => set({ showGuide: false }),
 }));

@@ -52,13 +52,13 @@ const features = [
 
 export default function WelcomeBanner() {
   const { showGuide, closeGuide } = useAppStore();
-  // firstVisit is true if never dismissed before
-  const [firstVisit] = useState(() => !localStorage.getItem(STORAGE_KEY));
+  const [dismissed, setDismissed] = useState(() => !!localStorage.getItem(STORAGE_KEY));
 
-  const visible = firstVisit || showGuide;
+  const visible = !dismissed || showGuide;
 
   const dismiss = () => {
     localStorage.setItem(STORAGE_KEY, '1');
+    setDismissed(true);
     closeGuide();
   };
 

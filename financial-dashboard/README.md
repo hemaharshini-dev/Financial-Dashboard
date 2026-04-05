@@ -2,6 +2,8 @@
 
 A clean, interactive financial dashboard built with React + Vite. Track transactions, visualize spending patterns, set budget goals, monitor net worth, and switch between Viewer and Admin roles — with dark mode, animations, and localStorage persistence. All amounts are in Indian Rupees (₹).
 
+![Spendlytic Demo](./assets/demo.gif)
+
 ---
 
 ## Tech Stack
@@ -12,7 +14,7 @@ A clean, interactive financial dashboard built with React + Vite. Track transact
 | Tailwind CSS v4 | Utility-first styling, dark mode via `class` strategy |
 | Recharts | Composable, responsive charts with dark mode support |
 | Zustand | Minimal boilerplate state management with localStorage persistence |
-| Framer Motion | Card animations, sidebar collapse, modal slide-in, page transitions, stagger effects |
+| Framer Motion | Animations — stagger, count-up, hover lift, page transitions |
 | Lucide React | Consistent icon set |
 | date-fns | Lightweight date formatting and arithmetic |
 | Inter (Google Fonts) | Clean, readable UI typography |
@@ -33,178 +35,99 @@ Open [http://localhost:5173](http://localhost:5173)
 
 ```bash
 # Production build
-npm run build
-npm run preview
+npm run build && npm run preview
 ```
 
 ---
 
 ## Approach & Key Design Decisions
 
-### Why Zustand over Redux or Context?
-Zustand gives a clean store-per-concern pattern with zero boilerplate. Each store (`useTransactionStore`, `useAppStore`, `useBudgetStore`, `useNetWorthStore`) is independently testable and has a single responsibility. Redux would add unnecessary complexity for a frontend-only app with no async middleware needs.
+**Why Zustand over Redux?**
+Each store (`useTransactionStore`, `useAppStore`, `useBudgetStore`, `useNetWorthStore`) has a single responsibility with zero boilerplate. Redux would add unnecessary complexity for a frontend-only app with no async middleware needs.
 
-### Why no react-router?
-The assignment requires no backend and has only 3 pages. Hash-based routing (`window.location.hash`) achieves deep-linking and refresh-persistence in ~15 lines with zero dependencies. Adding react-router would be over-engineering for this scope.
+**Why no react-router?**
+Only 3 pages. Hash-based routing (`window.location.hash`) achieves deep-linking and refresh-persistence in ~15 lines with zero dependencies.
 
-### Why InsightsContext?
-`useInsights` is an expensive computation (filtering, grouping, sorting 60 transactions across 5 sub-hooks). Without context, every child component that calls `useInsights()` runs the full computation independently. `InsightsProvider` wraps each page so the computation runs exactly once and all children share the result via `useInsightsContext()`.
+**Why InsightsContext?**
+`useInsights` is an expensive computation across 5 sub-hooks. Without context, every child component runs it independently. `InsightsProvider` wraps each page so the computation runs exactly once and all children share the result.
 
-### Why split useInsights into 5 sub-hooks?
-A single large `useMemo` with `[transactions]` as dependency recalculates everything on every transaction change. Splitting into `useDateAnchors`, `useMonthlyTotals`, `useCategoryTotals`, `useBalanceTrend`, `useSpendingStreak` means each sub-hook only re-runs when its specific inputs change — e.g. `useBalanceTrend` only re-runs when `latestDate` changes, not when savings rate changes.
+**Why split useInsights into 5 sub-hooks?**
+A single `useMemo([transactions])` recalculates everything on every change. Splitting into `useDateAnchors`, `useMonthlyTotals`, `useCategoryTotals`, `useBalanceTrend`, `useSpendingStreak` means each only re-runs when its specific inputs change.
 
-### Why localStorage over sessionStorage or IndexedDB?
-LocalStorage is synchronous, universally supported, and sufficient for 60–200 transactions. The data is small (< 50KB). IndexedDB would be appropriate at thousands of records. SessionStorage would lose data on tab close, which is wrong for a finance app.
+**Why mock data anchored to June 2025?**
+If mock data used today's date, charts and insights would show empty data for most of the year. Anchoring to the latest transaction date means everything always shows meaningful data regardless of when the app is opened.
 
-### Why mock data anchored to June 2025 instead of today?
-If mock data used today's date, the Spending Forecast and Monthly Comparison would show empty current-month data for most of the year. Anchoring to the latest transaction date means charts and insights always show meaningful data regardless of when the app is opened.
-
-### Why RFC 4180 CSV parser instead of a library?
-The import parser is ~25 lines and handles all edge cases needed (quoted fields, escaped quotes, commas in descriptions). Adding a CSV library (Papa Parse ~50KB) for this use case would be disproportionate.
+**Why a custom CSV parser instead of a library?**
+The parser is ~25 lines and handles all needed edge cases (quoted fields, escaped quotes, commas in descriptions). Adding Papa Parse (~50KB) would be disproportionate.
 
 ---
 
 ## Features
 
 ### Dashboard
-- Staggered animated count-up summary cards with gradient icons: Total Balance, Monthly Income, Monthly Expenses, Savings Rate
-- **Trend indicators** on each card — ↑/↓ % change vs last month, color-coded (green = good, red = bad) with sub-labels
-- **Income vs Expenses stacked area chart** — 6-month view with gradient fills, horizontal-only grid, 6-month net callout, dark-mode aware
-- **Spending Breakdown donut chart** — click any slice to jump to Transactions filtered by that category
-- Quick stats with colored icon badges: largest expense, most active category, projected month-end spend
-- **Spending Forecast** — anchored to latest transaction date; color-coded vs last month
-- **Recurring Transactions** — Done ✓ / Pending status per item for current month; total monthly commitments shown in header
-- **Net Worth Tracker** — hero net worth number, assets vs liabilities ratio bar, separate editable sections; Admin can add/remove entries inline
-- **Customizable Widgets** — ⚙ gear icon in header shows/hides any of the 6 dashboard sections; preferences saved to localStorage
-- **Welcome Guide** — shown on first visit as an inline banner; re-open anytime via the `?` icon in the header
+
+![Dashboard](./assets/dashboard.jpeg)
+
+- Animated summary cards with trend indicators (↑/↓ % vs last month): Total Balance, Monthly Income, Monthly Expenses, Savings Rate
+- Income vs Expenses stacked area chart — 6-month view with 6-month net callout
+- Spending Breakdown donut chart — click any slice to filter Transactions by that category
+- Quick stats: largest expense this month, most active category, projected month-end spend
+- Recurring Transactions — Done ✓ / Pending status per item; total monthly commitments
+- Net Worth Tracker — hero net worth number, assets vs liabilities ratio bar, Admin edits inline
+- Customizable Widgets — show/hide any of 6 dashboard sections via ⚙ gear icon
+- Welcome Guide — inline banner on first visit; re-open anytime via `?` in header
 
 ### Transactions
-- Table with Date, Description, Category, Type, Amount columns
-- Notes shown as sub-text under description
-- Real-time search by description, category, or notes
-- Filter by type (income / expense), multi-select category chips with `aria-pressed`, date range with From / To labels
-- Sort by date (newest/oldest) or amount (high/low)
-- **Totals summary bar** — live total income, expenses, and net for all filtered transactions
-- **Pagination** — 15 rows per page; resets automatically on filter change
-- **Transaction count badge** on sidebar link — shows filtered count when filters are active
-- Empty state UI when no results match filters
-- Viewer sees a hint to switch to Admin mode
-- **Admin only:** Add transaction modal — defaults to today's date, no negative amounts, focus trap, scrollable on short screens
-- **Admin only:** `N` keyboard shortcut (shown as `kbd` badge on button) opens Add Transaction modal
-- **Admin only:** Add optional Notes and mark transactions as Recurring monthly
-- **Admin only:** Delete confirmation dialog — no accidental data loss
-- **Admin only:** Export filtered transactions as CSV (shows count) or JSON
-- **Admin only:** Import transactions from CSV with row-level validation and toast feedback
+
+![Transactions Page](./assets/transactionPage.jpeg)
+
+- Table with search, multi-select category filter, type filter, date range, and sort
+- Active filter indicator — border highlights and filter summary pills when filters are on
+- Search clear button, totals summary bar (income / expenses / net), pagination (15/page)
+- **Admin only:** Add / Edit / Delete with confirmation dialog, `N` keyboard shortcut, Notes field, Recurring flag
+- **Admin only:** Export CSV (RFC 4180 quoted, includes notes + recurring) and JSON
+- **Admin only:** Import CSV with row-level validation and toast feedback
 
 ### Insights
-- Skeleton loaders on page load with staggered card entrance animations
-- **Top Spending Category** — colored tinted card background using the category's own color; decorative accent circle
-- **Savings Rate** — gradient progress bar with glow effect; target marker at 20%; saved amount in ₹; income/expenses/saved breakdown row; handles no-income state gracefully
-- **Days Since Large Expense** — streak counter for expenses over ₹2,000
-- **Monthly Comparison** — bar chart with gradient fills and expense change callout (↑/↓ % vs last month)
-- **Top 3 Expense Categories** — ranked with relative progress bars
-- **Budget Goals** — unified green → amber → red color system; status badge pill per category; `X% used` label; overage amount; Admin edits inline; month label in header
 
-### Visual Design
-- Glassmorphism header — `bg-white/80 backdrop-blur-md` floats above the dot-grid background
-- Subtle dot-grid background pattern on `html` and `html.dark` for visual depth
-- Card hover lift animation via Framer Motion `whileHover={{ y: -2 }}`
-- Gradient icon backgrounds on summary cards
-- Color-coded RoleSwitcher — Admin is solid blue, Viewer is white/gray
-- Page icon badge in header title for each page
+![Insights Page](./assets/insightsPage.jpeg)
 
-### Sidebar
-- **Collapsible/expandable** — circular toggle button on the right border edge, always in the same position
-- Collapsed (64px): icon-only with hover tooltips; expanded (240px): full labels with smooth width animation
-- Active item has a left accent bar (`border-l-[3px]`) for clear visual hierarchy
-- Collapse preference persisted to localStorage
+- Top Spending Category — colored card tinted with the category's own color
+- Savings Rate — gradient progress bar, target marker at 20%, ₹ saved amount, income/expense breakdown
+- Days Since Large Expense — streak counter for expenses over ₹2,000
+- Monthly Comparison — bar chart with gradient fills and ↑/↓ % expense callout
+- Top 3 Expense Categories — ranked with relative progress bars
+- Budget Goals — per-category monthly limits, green → amber → red color system, Admin edits inline
 
 ### Alerts Panel
-- Bell icon with red badge showing active alert count
-- Smart alerts derived automatically:
-  - Savings rate below 10%
-  - Current month spending higher than last month (with ₹ difference)
-  - Any category at 80%+ of its monthly budget (warning)
-  - Any category exceeding its monthly budget (danger)
-- Color-coded: blue (info), amber (warning), red (danger)
-- Per-alert dismiss on hover + "Dismiss All" button; click-outside to close
+Smart alerts auto-derived from data: savings rate below 10%, spending higher than last month, budget at 80%+ or exceeded. Per-alert dismiss and Dismiss All. Color-coded by severity.
 
 ### Role-Based UI
-- **Viewer** — read-only: all data, charts, and insights visible; no add/edit/delete/import; sees hint to switch to Admin
-- **Admin** — full access: add, edit, delete, import; export with count; inline budget and asset/liability editing
-- Role switcher in header — icon-only on mobile, icon + label on desktop
-- Toast notification on every role switch; role persisted to localStorage
-
-### Accessibility
-- `aria-label` on all icon-only buttons
-- Focus trap in Add/Edit modal — Tab cycles within the modal
-- `role="dialog"` and `aria-modal="true"` on modal; `role="alertdialog"` on delete confirmation
-- `aria-pressed` on category filter chips with keyboard support
-- Budget status conveyed with both color and text labels
-
-### Responsiveness
-- Desktop (md+): collapsible sidebar, multi-column grids
-- Mobile: fixed bottom nav, single-column stacks, `pb-28` clears bottom nav
-- Header: compact on mobile — reduced padding, icon-only RoleSwitcher on small screens
-- Transaction filters: date range inputs share a single row with `flex-1 min-w-0`
-- Add/Edit modal: `max-h-[90vh]` with scrollable form body — never clips on short screens
-- Welcome banner: `grid-cols-2` on mobile — compact, not overwhelming
-- Charts: `ResponsiveContainer width="100%"` — auto-resize at all breakpoints
-- Transaction table: `overflow-x-auto` — horizontal scroll on narrow screens
-
-### UX & Polish
-- Hash-based routing — URL updates on navigation; refresh restores the correct page
-- Error boundaries on all pages — crash shows "Try again" UI without taking down the app
-- Toast notification system with auto-dismiss (3s) and manual close
-- Dark mode toggle in header; system preference respected on first load
-- All data persisted to localStorage: transactions, budgets, assets, liabilities, widgets, role, sidebar state, guide dismissed flag
-
----
-
-## Onboarding Guide
-
-A **Welcome Guide** appears inline at the top of the Dashboard on first visit, explaining 6 non-obvious features:
-
-| Feature | What it does |
-|---|---|
-| Click any chart slice | Filters Transactions by that category |
-| Smart alerts | Bell icon auto-detects budget/savings issues |
-| Budget Goals | Monthly limits editable inline (Admin) |
-| Recurring tracker | Done/Pending status per item this month |
-| Keyboard shortcut | `N` opens Add Transaction (Admin) |
-| Customise dashboard | ⚙ gear hides/shows widgets |
-
-After dismissing, click the **`?` icon** in the header anytime to re-open the guide inline on the Dashboard.
+- **Viewer** — read-only access to all data, charts, and insights
+- **Admin** — full access: add, edit, delete, import, export, inline budget and asset editing
+- Role switcher in header; toast on switch; persisted to localStorage
 
 ---
 
 ## Role Switching
 
-Use the **Viewer / Admin** toggle in the header:
-- Instantly shows/hides Add, Edit, Delete, Import, Export, keyboard shortcut
-- Hides inline budget and asset/liability editing
-- Fires a toast confirming the active role
-- Persists to localStorage
+Use the **Viewer / Admin** toggle in the header. Switching instantly shows/hides all admin controls and fires a confirmation toast. Role persists across page refreshes.
 
 ---
 
 ## How Budget Goals Work
 
-Budget Goals track spending **per category for the current month only**. Month shown in the section header.
+Tracks spending **per category for the current month only**.
 
-| Progress | Bar Color | Status Badge |
+| Progress | Color | Badge |
 |---|---|---|
-| Under 80% | 🟢 Green | "On track" |
-| 80–99% | 🟡 Amber | "Approaching limit" |
-| 100%+ | 🔴 Red | "Over budget" |
+| Under 80% | 🟢 Green | On track |
+| 80–99% | 🟡 Amber | Approaching limit |
+| 100%+ | 🔴 Red | Over budget |
 
-Each row: category name · status badge · `₹spent / ₹limit` · `X% used` · overage if exceeded.
+Default limits: Food ₹5,000 · Transport ₹2,000 · Shopping ₹3,000 · Entertainment ₹1,500 · Health ₹2,000 · Utilities ₹3,000
 
-Default monthly limits: Food ₹5,000 · Transport ₹2,000 · Shopping ₹3,000 · Entertainment ₹1,500 · Health ₹2,000 · Utilities ₹3,000
-
-As **Admin**, click the pencil icon to edit inline. Reset button restores defaults. Saved to localStorage.
-
-The Spending Breakdown pie chart and Top 3 Categories use all-time totals — Budget Goals and Alerts use current month only.
+As **Admin**, click the pencil icon to edit inline. Limits saved to localStorage.
 
 ---
 
@@ -216,12 +139,36 @@ date,description,category,amount,type
 2025-07-05,Groceries,Food,2500,expense
 ```
 
-- `date` — `YYYY-MM-DD`
-- `category` — one of: `Food`, `Transport`, `Shopping`, `Entertainment`, `Health`, `Utilities`, `Salary`, `Freelance`
-- `type` — `income` or `expense`
+- `date` — `YYYY-MM-DD` · `category` — one of the 8 supported categories · `type` — `income` or `expense`
 - Optional: `notes`, `recurring` (`true` / `false`)
+- Invalid rows are skipped and reported in the toast
 
-Invalid rows are skipped and reported in the toast.
+---
+
+## Optional Enhancements Implemented
+
+All optional enhancements from the spec were implemented, plus several additional ones:
+
+| Enhancement | Details |
+|---|---|
+| ✅ Dark mode | System preference on first load; toggled via header; persisted |
+| ✅ localStorage persistence | All data survives refresh — transactions, budgets, assets, role, preferences |
+| ✅ Export CSV + JSON | RFC 4180 quoted CSV with notes and recurring columns |
+| ✅ Import CSV | RFC 4180 parser, row-level validation, error reporting |
+| ✅ Advanced filtering | Multi-select categories, date range, type, sort — all combinable |
+| ✅ Animations | Framer Motion — stagger, count-up, hover lift, page transitions |
+| ✅ Budget Goals | Per-category monthly limits, inline editing, smart color system |
+| ✅ Net Worth Tracker | Assets + liabilities with ratio bar |
+| ✅ Recurring Transactions | Done/Pending status, monthly commitment totals |
+| ✅ Spending Forecast | Projected month-end spend anchored to latest transaction date |
+| ✅ Smart Alerts | Auto-derived from savings rate, spending trends, budget overruns |
+| ✅ Collapsible Sidebar | Edge toggle, icon-only collapsed state with tooltips |
+| ✅ Customizable Widgets | Show/hide 6 dashboard sections, persisted |
+| ✅ Onboarding Guide | First-visit inline banner, re-openable via `?` |
+| ✅ Keyboard shortcuts | `N` to add transaction, `Escape` to close modal |
+| ✅ Drill-down navigation | Pie chart slice → Transactions filtered by category |
+| ✅ Error boundaries | Crash recovery without taking down the whole app |
+| ✅ Hash-based routing | Deep-linking — refresh restores the correct page |
 
 ---
 
@@ -229,11 +176,7 @@ Invalid rows are skipped and reported in the toast.
 
 60 transactions · January–June 2025 · 8 categories · Indian Rupees (₹)
 
-Realistic Indian pricing and merchant names (Ola, Rapido, PVR, Wonderla, Barbeque Nation, etc.).
-
-Recurring flagged on: Monthly Salary, Netflix, Spotify, Electricity Bill, Internet Bill, Gym Membership, Water Bill.
-
-Mock data version auto-detected via hash — localStorage clears automatically when data changes.
+Realistic Indian pricing and merchant names (Ola, Rapido, PVR, Wonderla, Barbeque Nation, etc.). Mock data version auto-detected via hash — localStorage clears automatically when data changes.
 
 ---
 
@@ -242,61 +185,29 @@ Mock data version auto-detected via hash — localStorage clears automatically w
 ```
 src/
 ├── components/
-│   ├── layout/       # Sidebar (collapsible + edge toggle), Header (glassmorphism + guide),
-│   │                 # Layout, AlertsPanel
-│   ├── dashboard/    # SummaryCards (stagger + trends), BalanceTrendChart (area + net callout),
-│   │                 # SpendingBreakdown (drill-down), RecurringList (done/pending + totals),
-│   │                 # NetWorthCard (hero number + ratio bar)
-│   ├── transactions/ # TransactionTable (totals bar + pagination), TransactionRow (memo + confirm),
-│   │                 # TransactionFilters (responsive date range), AddEditModal (scrollable + focus trap)
-│   ├── insights/     # InsightsPanel, TopSpendingCard (colored bg), MonthlyComparison (gradient bars),
-│   │                 # SavingsRate (gradient + target marker), BudgetGoals (unified color system)
-│   └── ui/           # Badge, EmptyState, RoleSwitcher (color-coded), Toast, Skeleton,
-│                     # ErrorBoundary, WelcomeBanner (inline + re-openable)
-├── context/          # InsightsContext — shared computed insights, runs useInsights once per page
-├── store/            # useTransactionStore, useAppStore (widgets + sidebar + guide), useBudgetStore,
-│                     # useNetWorthStore
-├── data/             # mockData.js — 60 transactions, auto-hash versioning, recurring flags
-├── hooks/            # useFilteredTransactions, useInsights (5 focused sub-hooks), useAlerts
-├── utils/            # formatCurrency, formatDate, exportData (CSV + JSON), importData (CSV parse)
-└── pages/            # Dashboard (InsightsProvider + WelcomeBanner), Transactions, Insights
+│   ├── layout/       # Sidebar, Header, Layout, AlertsPanel
+│   ├── dashboard/    # SummaryCards, BalanceTrendChart, SpendingBreakdown,
+│   │                 # RecurringList, NetWorthCard
+│   ├── transactions/ # TransactionTable, TransactionRow, TransactionFilters, AddEditModal
+│   ├── insights/     # InsightsPanel, TopSpendingCard, MonthlyComparison,
+│   │                 # SavingsRate, BudgetGoals
+│   └── ui/           # Badge, EmptyState, RoleSwitcher, Toast, Skeleton,
+│                     # ErrorBoundary, WelcomeBanner
+├── context/          # InsightsContext — shared computed insights per page
+├── store/            # useTransactionStore, useAppStore, useBudgetStore, useNetWorthStore
+├── data/             # mockData.js — 60 transactions, auto-hash versioning
+├── hooks/            # useFilteredTransactions, useInsights (5 sub-hooks), useAlerts
+├── utils/            # formatCurrency, formatDate, exportData, importData
+└── pages/            # Dashboard, Transactions, Insights
 ```
-
----
-
-## Optional Enhancements Implemented
-
-All optional enhancements from the assignment spec were implemented, plus several additional ones:
-
-| Enhancement | Details |
-|---|---|
-| ✅ Dark mode | System preference detected on first load; toggled via header; persisted |
-| ✅ localStorage persistence | All data survives page refresh — transactions, budgets, assets, role, preferences |
-| ✅ Export functionality | CSV (with notes + recurring columns, RFC 4180 quoted) and JSON export |
-| ✅ Advanced filtering | Multi-select category chips, date range, type filter, sort — all combinable |
-| ✅ Animations & transitions | Framer Motion throughout — stagger, count-up, hover lift, page transitions |
-| ✅ Import CSV | Bulk import with RFC 4180 parser, row-level validation, error reporting |
-| ✅ Budget Goals | Per-category monthly limits with unified color system, inline editing |
-| ✅ Net Worth Tracker | Assets + liabilities with ratio bar and hero net worth number |
-| ✅ Recurring Transactions | Done/Pending status, monthly commitment totals |
-| ✅ Spending Forecast | Projected month-end spend anchored to latest transaction date |
-| ✅ Smart Alerts | Auto-derived from savings rate, spending trends, and budget overruns |
-| ✅ Collapsible Sidebar | Edge toggle button, icon-only collapsed state with tooltips |
-| ✅ Customizable Widgets | Show/hide any of 6 dashboard sections, persisted |
-| ✅ Onboarding Guide | First-visit inline banner, re-openable via `?` in header |
-| ✅ Keyboard shortcuts | `N` to add transaction, `Escape` to close modal |
-| ✅ Drill-down navigation | Click pie chart slice → Transactions filtered by category |
-| ✅ Error boundaries | Crash recovery without taking down the whole app |
-| ✅ Hash-based routing | Deep-linking — refresh restores the correct page |
 
 ---
 
 ## Architecture Notes
 
-- **InsightsContext** — `useInsights` runs exactly once per page (Dashboard and Insights each have their own `InsightsProvider`). All child components consume via `useInsightsContext`, eliminating duplicate Zustand subscriptions and redundant `useMemo` recalculations.
-- **useInsights** is split into 5 focused sub-hooks (`useDateAnchors`, `useMonthlyTotals`, `useCategoryTotals`, `useBalanceTrend`, `useSpendingStreak`), each with narrowed `useMemo` dependencies — only the affected calculation re-runs on data change.
+- **InsightsContext** — `useInsights` runs once per page; all child components share the result via `useInsightsContext`, eliminating duplicate Zustand subscriptions.
+- **useInsights** split into 5 focused sub-hooks with narrowed `useMemo` dependencies — only the affected calculation re-runs on data change.
 - **Spending Forecast** anchored to latest transaction date — not `new Date()` — so mock data always shows a meaningful projection.
 - **TransactionRow** wrapped with `React.memo` — only re-renders when its own transaction prop changes.
 - **ErrorBoundary** wraps all pages — a crash shows "Try again" without taking down the whole app.
-- **Sidebar collapse** and **guide dismissed** state both persisted to localStorage via `useAppStore`.
-- **WelcomeBanner** uses `showGuide` from `useAppStore` (session state) combined with a localStorage flag for first-visit detection — inline on Dashboard, re-openable via `?` in header.
+- **DEFAULT_FILTERS** constant in `useTransactionStore` — single source of truth for filter reset, no duplication.

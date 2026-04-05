@@ -13,7 +13,8 @@ export default function TransactionTable({ onEdit }) {
   const { role } = useAppStore();
   const [page, setPage] = useState(1);
 
-  useEffect(() => { setPage(1); }, [transactions.length]);
+  // Reset to page 1 whenever the filtered result changes
+  useEffect(() => { setPage(1); }, [transactions]);
 
   const totalPages = Math.max(1, Math.ceil(transactions.length / PAGE_SIZE));
   const paginated = transactions.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);

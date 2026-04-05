@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
+import { useToast } from '../ui/Toast';
 import { CATEGORIES } from '../../data/mockData';
 
 const empty = () => ({ date: new Date().toISOString().split('T')[0], description: '', category: 'Food', amount: '', type: 'expense', recurring: false, notes: '' });
 
 export default function AddEditModal({ isOpen, onClose, transaction }) {
   const { addTransaction, editTransaction } = useTransactionStore();
+  const toast = useToast();
   const [form, setForm] = useState(empty);
   const [errors, setErrors] = useState({});
   const firstFieldRef = useRef(null);
@@ -51,7 +53,13 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     const data = { ...form, amount: parseFloat(form.amount) };
-    transaction ? editTransaction(transaction.id, data) : addTransaction(data);
+    if (transaction) {
+      editTransaction(transaction.id, data);
+      toast('Transaction updated successfully');
+    } else {
+      addTransaction(data);
+      toast('Transaction added successfully');
+    }
     onClose();
   };
 

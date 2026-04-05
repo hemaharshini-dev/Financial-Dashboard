@@ -38,13 +38,13 @@ function TrendBadge({ current, previous, inverse = false }) {
   );
 }
 
-function SummaryCard({ title, value, icon: Icon, color, isCurrency = true, suffix = '', subLabel, trend }) {
+function SummaryCard({ title, value, icon: Icon, color, isCurrency = true, suffix = '', subLabel, trend, index = 0 }) {
   const animated = useCountUp(value);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.4, delay: index * 0.08 }}
       whileHover={{ y: -2, boxShadow: '0 8px 25px -5px rgb(0 0 0 / 0.1)' }}
       className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 transition-shadow cursor-default"
     >
@@ -80,21 +80,21 @@ export default function SummaryCards() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <SummaryCard
+      <SummaryCard index={0}
         title="Total Balance" value={Math.abs(totalBalance)} icon={Wallet}
         color="from-blue-500 to-blue-600" subLabel="All time"
       />
-      <SummaryCard
+      <SummaryCard index={1}
         title="Monthly Income" value={monthlyIncome} icon={TrendingUp}
         color="from-emerald-500 to-emerald-600" subLabel="vs last month"
         trend={{ current: monthlyIncome, previous: lastMonthIncome }}
       />
-      <SummaryCard
+      <SummaryCard index={2}
         title="Monthly Expenses" value={monthlyExpenses} icon={TrendingDown}
         color="from-red-500 to-red-600" subLabel="vs last month"
         trend={{ current: monthlyExpenses, previous: lastMonthExpenses, inverse: true }}
       />
-      <SummaryCard
+      <SummaryCard index={3}
         title="Savings Rate" value={savingsRate} icon={PiggyBank}
         color="from-purple-500 to-purple-600" isCurrency={false} suffix="%" subLabel="this month"
         trend={{ current: savingsRate, previous: lastMonthSavings }}

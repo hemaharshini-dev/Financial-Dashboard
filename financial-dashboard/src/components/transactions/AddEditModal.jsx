@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { CATEGORIES } from '../../data/mockData';
 
-const empty = { date: '', description: '', category: 'Food', amount: '', type: 'expense', recurring: false, notes: '' };
+const empty = () => ({ date: new Date().toISOString().split('T')[0], description: '', category: 'Food', amount: '', type: 'expense', recurring: false, notes: '' });
 
 export default function AddEditModal({ isOpen, onClose, transaction }) {
   const { addTransaction, editTransaction } = useTransactionStore();
@@ -13,7 +13,7 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
   const firstFieldRef = useRef(null);
 
   useEffect(() => {
-    setForm(transaction ? { ...transaction, amount: String(transaction.amount) } : empty);
+    setForm(transaction ? { ...transaction, amount: String(transaction.amount) } : empty());
     setErrors({});
   }, [transaction, isOpen]);
 
@@ -66,7 +66,7 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
         ref={ref}
         type={type}
         value={form[key]}
-        onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+        onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value.replace(/^-/, '') }))}
         className={`w-full px-3 py-2 text-sm rounded-lg border ${errors[key] ? 'border-red-400' : 'border-gray-200 dark:border-gray-700'} bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500`}
       />
       {errors[key] && <p className="text-xs text-red-500 mt-1">{errors[key]}</p>}

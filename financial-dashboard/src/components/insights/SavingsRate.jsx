@@ -2,7 +2,8 @@ import { PiggyBank } from 'lucide-react';
 import { useInsightsContext } from '../../context/InsightsContext';
 
 export default function SavingsRate() {
-  const { savingsRate } = useInsightsContext();
+  const { savingsRate, monthlyComparison } = useInsightsContext();
+  const hasIncome = monthlyComparison.thisMonthIncome > 0;
   const clamped = Math.max(0, Math.min(100, savingsRate));
   const color = clamped >= 20 ? '#10b981' : clamped >= 10 ? '#f59e0b' : '#ef4444';
 
@@ -12,13 +13,22 @@ export default function SavingsRate() {
         <PiggyBank size={16} className="text-purple-500" />
         <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Savings Rate (This Month)</span>
       </div>
-      <p className="text-3xl font-bold mb-4" style={{ color }}>{clamped}%</p>
-      <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-        <div className="h-full rounded-full transition-all duration-700" style={{ width: `${clamped}%`, backgroundColor: color }} />
-      </div>
-      <p className="text-xs text-gray-400 mt-2">
-        {clamped >= 20 ? '🎉 Great savings!' : clamped >= 10 ? '👍 On track' : '⚠️ Consider reducing expenses'}
-      </p>
+      {!hasIncome ? (
+        <>
+          <p className="text-3xl font-bold mb-4 text-gray-300 dark:text-gray-600">—</p>
+          <p className="text-xs text-gray-400">No income recorded this month</p>
+        </>
+      ) : (
+        <>
+          <p className="text-3xl font-bold mb-4" style={{ color }}>{clamped}%</p>
+          <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+            <div className="h-full rounded-full transition-all duration-700" style={{ width: `${clamped}%`, backgroundColor: color }} />
+          </div>
+          <p className="text-xs text-gray-400 mt-2">
+            {clamped >= 20 ? '🎉 Great savings!' : clamped >= 10 ? '👍 On track' : '⚠️ Consider reducing expenses'}
+          </p>
+        </>
+      )}
     </div>
   );
 }

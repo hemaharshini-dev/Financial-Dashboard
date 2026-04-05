@@ -59,16 +59,16 @@ export default function Transactions() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h2 className="text-sm text-gray-500 dark:text-gray-400">{filtered.length} transactions</h2>
+        <h2 className="text-sm text-gray-500 dark:text-gray-400">{filtered.length} transaction{filtered.length !== 1 ? 's' : ''}</h2>
         <div className="flex items-center gap-2">
-          {role === 'admin' && (
+          {role === 'admin' ? (
             <>
               <input ref={fileInputRef} type="file" accept=".csv" onChange={handleImport} className="hidden" />
               <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 <Upload size={14} /> Import CSV
               </button>
               <button onClick={() => exportCSV(filtered)} className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                <Download size={14} /> CSV
+                <Download size={14} /> Export CSV ({filtered.length})
               </button>
               <button onClick={() => exportJSON(filtered)} className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 <Download size={14} /> JSON
@@ -77,6 +77,8 @@ export default function Transactions() {
                 <Plus size={14} /> Add Transaction
               </button>
             </>
+          ) : (
+            <span className="text-xs text-gray-400 dark:text-gray-500 italic">Switch to Admin to add or edit transactions</span>
           )}
         </div>
       </div>

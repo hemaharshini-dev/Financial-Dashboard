@@ -83,9 +83,8 @@ export const useInsights = () => {
       ? Math.round(((thisMonthIncome - thisMonthExpenses) / thisMonthIncome) * 100)
       : 0;
 
-    const today = new Date();
-    const dayOfMonth = today.getDate();
-    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const dayOfMonth = latestDate.getDate();
+    const daysInMonth = new Date(latestDate.getFullYear(), latestDate.getMonth() + 1, 0).getDate();
     const forecast = dayOfMonth > 0 ? Math.round((thisMonthExpenses / dayOfMonth) * daysInMonth) : 0;
 
     return {
@@ -95,7 +94,7 @@ export const useInsights = () => {
       savingsRate: rate,
       spendingForecast: forecast,
     };
-  }, [allTimeCategoryTotals, thisMonthIncome, thisMonthExpenses]);
+  }, [allTimeCategoryTotals, thisMonthIncome, thisMonthExpenses, latestDate]);
 
   return {
     topCategory,

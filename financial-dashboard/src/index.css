@@ -4,13 +4,18 @@
 
 @layer base {
   * { box-sizing: border-box; }
-  body {
-    @apply bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors duration-300;
-    font-family: 'Inter', system-ui, sans-serif;
+  html {
     background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px);
     background-size: 24px 24px;
+    background-color: #f9fafb;
   }
-  .dark body, :where(.dark, .dark *) body {
+  html.dark {
     background-image: radial-gradient(circle, #1f2937 1px, transparent 1px);
+    background-color: #030712;
+  }
+  body {
+    @apply text-gray-900 dark:text-gray-100 transition-colors duration-300;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: transparent;
   }
 }

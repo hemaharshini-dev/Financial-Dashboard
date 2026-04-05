@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Settings } from 'lucide-react';
+import { Sun, Moon, Settings, LayoutDashboard, ArrowLeftRight, Lightbulb } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import RoleSwitcher from '../ui/RoleSwitcher';
 import AlertsPanel from './AlertsPanel';
 import { AnimatePresence, motion } from 'framer-motion';
 
-const pageTitles = { dashboard: 'Dashboard', transactions: 'Transactions', insights: 'Insights' };
+const pageConfig = {
+  dashboard:    { title: 'Dashboard',    Icon: LayoutDashboard },
+  transactions: { title: 'Transactions', Icon: ArrowLeftRight },
+  insights:     { title: 'Insights',     Icon: Lightbulb },
+};
 
 const widgetLabels = {
   summaryCards: 'Summary Cards',
@@ -20,6 +24,7 @@ export default function Header({ activePage }) {
   const { darkMode, toggleDarkMode, widgets, toggleWidget } = useAppStore();
   const [showCustomize, setShowCustomize] = useState(false);
   const customizeRef = useRef(null);
+  const { title, Icon: PageIcon } = pageConfig[activePage] || pageConfig.dashboard;
 
   useEffect(() => {
     const handler = (e) => { if (customizeRef.current && !customizeRef.current.contains(e.target)) setShowCustomize(false); };
@@ -29,7 +34,12 @@ export default function Header({ activePage }) {
 
   return (
     <header className="h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40">
-      <h1 className="text-lg font-semibold text-gray-900 dark:text-white">{pageTitles[activePage]}</h1>
+      <div className="flex items-center gap-2.5">
+        <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800">
+          <PageIcon size={16} className="text-gray-500 dark:text-gray-400" />
+        </div>
+        <h1 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h1>
+      </div>
       <div className="flex items-center gap-3">
         <AlertsPanel />
         {activePage === 'dashboard' && (

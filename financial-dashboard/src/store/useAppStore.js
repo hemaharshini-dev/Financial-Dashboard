@@ -16,6 +16,7 @@ const getInitialDarkMode = () => {
 const defaultWidgets = { summaryCards: true, balanceTrend: true, spendingBreakdown: true, quickStats: true, recurring: true, netWorth: true };
 
 export const useAppStore = create((set) => ({
+  // ── Persisted state (localStorage) ──────────────────────────────────────
   role: getInitial('fd_role', 'viewer'),
   darkMode: getInitialDarkMode(),
   widgets: getInitial('fd_widgets', defaultWidgets),
@@ -47,6 +48,7 @@ export const useAppStore = create((set) => ({
       return { sidebarCollapsed: next };
     }),
 
+  // ── Session state (not persisted, resets on refresh) ────────────────────
   showGuide: false,
   openGuide: () => set({ showGuide: true }),
   closeGuide: () => set({ showGuide: false }),

@@ -3,6 +3,8 @@ import { mockTransactions } from '../data/mockData';
 
 const STORAGE_KEY = 'fd_transactions';
 
+const DEFAULT_FILTERS = { search: '', type: 'all', categories: [], dateFrom: '', dateTo: '', sortBy: 'date', sortDir: 'desc' };
+
 const load = () => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -18,7 +20,7 @@ const save = (transactions) => {
 
 export const useTransactionStore = create((set) => ({
   transactions: load(),
-  filters: { search: '', type: 'all', categories: [], dateFrom: '', dateTo: '', sortBy: 'date', sortDir: 'desc' },
+  filters: DEFAULT_FILTERS,
 
   addTransaction: (tx) =>
     set((s) => {
@@ -42,5 +44,5 @@ export const useTransactionStore = create((set) => ({
     }),
 
   setFilters: (filters) => set((s) => ({ filters: { ...s.filters, ...filters } })),
-  resetFilters: () => set({ filters: { search: '', type: 'all', categories: [], dateFrom: '', dateTo: '', sortBy: 'date', sortDir: 'desc' } }),
+  resetFilters: () => set({ filters: DEFAULT_FILTERS }),
 }));

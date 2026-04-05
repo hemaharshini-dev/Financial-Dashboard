@@ -2,7 +2,7 @@
 
 A clean, interactive financial dashboard built with React + Vite. Track transactions, visualize spending patterns, set budget goals, and monitor net worth — with role-based access, dark mode, animations, and full localStorage persistence. All amounts are in Indian Rupees (₹).
 
-![Spendlytic Demo](./assets/demo.gif)
+![Spendlytic Demo](./financial-dashboard/assets/demo.gif)
 
 ---
 
@@ -27,16 +27,16 @@ npm run build && npm run preview
 
 ## Tech Stack
 
-| Tool | Reason |
-|---|---|
-| React 19 + Vite | Fast dev server, modern React features |
-| Tailwind CSS v4 | Utility-first styling, dark mode via `class` strategy |
-| Recharts | Composable, responsive charts with dark mode support |
-| Zustand | Minimal boilerplate state management with localStorage persistence |
-| Framer Motion | Animations — stagger, count-up, hover lift, page transitions |
-| Lucide React | Consistent icon set |
-| date-fns | Lightweight date formatting and arithmetic |
-| Inter (Google Fonts) | Clean, readable UI typography |
+| Tool                 | Reason                                                             |
+| -------------------- | ------------------------------------------------------------------ |
+| React 19 + Vite      | Fast dev server, modern React features                             |
+| Tailwind CSS v4      | Utility-first styling, dark mode via `class` strategy              |
+| Recharts             | Composable, responsive charts with dark mode support               |
+| Zustand              | Minimal boilerplate state management with localStorage persistence |
+| Framer Motion        | Animations — stagger, count-up, hover lift, page transitions       |
+| Lucide React         | Consistent icon set                                                |
+| date-fns             | Lightweight date formatting and arithmetic                         |
+| Inter (Google Fonts) | Clean, readable UI typography                                      |
 
 ---
 
@@ -44,7 +44,7 @@ npm run build && npm run preview
 
 ### Dashboard
 
-![Dashboard](./assets/dashboard.jpeg)
+![Dashboard](./financial-dashboard/assets/dashboard.jpeg)
 
 The main overview page. Everything updates live as transactions change.
 
@@ -60,7 +60,7 @@ The main overview page. Everything updates live as transactions change.
 
 ### Transactions
 
-![Transactions Page](./assets/transactionPage.jpeg)
+![Transactions Page](./financial-dashboard/assets/transactionPage.jpeg)
 
 Full transaction management with filtering, sorting, and export.
 
@@ -92,14 +92,14 @@ Computed insights derived entirely from transaction data — nothing is hardcode
 
 Switch between **Viewer** and **Admin** using the toggle in the header. Role persists across refreshes.
 
-| Capability | Viewer | Admin |
-|---|---|---|
-| View all data, charts, insights | ✅ | ✅ |
-| Add / Edit / Delete transactions | ❌ | ✅ |
-| Import / Export CSV & JSON | ❌ | ✅ |
-| Edit budget limits inline | ❌ | ✅ |
-| Add / remove net worth entries | ❌ | ✅ |
-| `N` keyboard shortcut | ❌ | ✅ |
+| Capability                       | Viewer | Admin |
+| -------------------------------- | ------ | ----- |
+| View all data, charts, insights  | ✅     | ✅    |
+| Add / Edit / Delete transactions | ❌     | ✅    |
+| Import / Export CSV & JSON       | ❌     | ✅    |
+| Edit budget limits inline        | ❌     | ✅    |
+| Add / remove net worth entries   | ❌     | ✅    |
+| `N` keyboard shortcut            | ❌     | ✅    |
 
 ---
 
@@ -120,11 +120,11 @@ Alerts are color-coded (blue / amber / red) and can be dismissed individually or
 
 Tracks spending **per category for the current month only**.
 
-| Progress | Color | Status |
-|---|---|---|
-| Under 80% | 🟢 Green | On track |
-| 80–99% | 🟡 Amber | Approaching limit |
-| 100%+ | 🔴 Red | Over budget |
+| Progress  | Color    | Status            |
+| --------- | -------- | ----------------- |
+| Under 80% | 🟢 Green | On track          |
+| 80–99%    | 🟡 Amber | Approaching limit |
+| 100%+     | 🔴 Red   | Over budget       |
 
 Default limits: Food ₹5,000 · Transport ₹2,000 · Shopping ₹3,000 · Entertainment ₹1,500 · Health ₹2,000 · Utilities ₹3,000
 
@@ -155,26 +155,26 @@ Invalid rows are skipped and reported in the toast. The exported CSV can be re-i
 
 All optional enhancements from the spec were implemented, plus several additional ones:
 
-| Enhancement | Details |
-|---|---|
-| ✅ Dark mode | System preference on first load; toggled via header; persisted |
+| Enhancement                 | Details                                                                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ✅ Dark mode                | System preference on first load; toggled via header; persisted                                                                                                                                                |
 | ✅ localStorage persistence | All data is stored in your browser's localStorage — no backend, no account needed. Your data is private to your browser and persists across page refreshes — transactions, budgets, assets, role, preferences |
-| ✅ Export CSV + JSON | RFC 4180 quoted CSV with notes and recurring columns |
-| ✅ Import CSV | RFC 4180 parser, row-level validation, error reporting |
-| ✅ Advanced filtering | Multi-select categories, date range, type, sort — all combinable |
-| ✅ Animations | Framer Motion — stagger, count-up, hover lift, page transitions |
-| ✅ Budget Goals | Per-category monthly limits, inline editing, smart color system |
-| ✅ Net Worth Tracker | Assets + liabilities with ratio bar |
-| ✅ Recurring Transactions | Done/Pending status, monthly commitment totals |
-| ✅ Spending Forecast | Projected month-end spend anchored to latest transaction date |
-| ✅ Smart Alerts | Auto-derived from savings rate, spending trends, budget overruns |
-| ✅ Collapsible Sidebar | Edge toggle, icon-only collapsed state with tooltips |
-| ✅ Customizable Widgets | Show/hide 6 dashboard sections, persisted |
-| ✅ Onboarding Guide | First-visit inline banner, re-openable via `?` in header |
-| ✅ Keyboard shortcuts | `N` to add transaction, `Escape` to close modal |
-| ✅ Drill-down navigation | Pie chart slice → Transactions filtered by category |
-| ✅ Error boundaries | Crash recovery without taking down the whole app |
-| ✅ Hash-based routing | Deep-linking — refresh restores the correct page |
+| ✅ Export CSV + JSON        | RFC 4180 quoted CSV with notes and recurring columns                                                                                                                                                          |
+| ✅ Import CSV               | RFC 4180 parser, row-level validation, error reporting                                                                                                                                                        |
+| ✅ Advanced filtering       | Multi-select categories, date range, type, sort — all combinable                                                                                                                                              |
+| ✅ Animations               | Framer Motion — stagger, count-up, hover lift, page transitions                                                                                                                                               |
+| ✅ Budget Goals             | Per-category monthly limits, inline editing, smart color system                                                                                                                                               |
+| ✅ Net Worth Tracker        | Assets + liabilities with ratio bar                                                                                                                                                                           |
+| ✅ Recurring Transactions   | Done/Pending status, monthly commitment totals                                                                                                                                                                |
+| ✅ Spending Forecast        | Projected month-end spend anchored to latest transaction date                                                                                                                                                 |
+| ✅ Smart Alerts             | Auto-derived from savings rate, spending trends, budget overruns                                                                                                                                              |
+| ✅ Collapsible Sidebar      | Edge toggle, icon-only collapsed state with tooltips                                                                                                                                                          |
+| ✅ Customizable Widgets     | Show/hide 6 dashboard sections, persisted                                                                                                                                                                     |
+| ✅ Onboarding Guide         | First-visit inline banner, re-openable via `?` in header                                                                                                                                                      |
+| ✅ Keyboard shortcuts       | `N` to add transaction, `Escape` to close modal                                                                                                                                                               |
+| ✅ Drill-down navigation    | Pie chart slice → Transactions filtered by category                                                                                                                                                           |
+| ✅ Error boundaries         | Crash recovery without taking down the whole app                                                                                                                                                              |
+| ✅ Hash-based routing       | Deep-linking — refresh restores the correct page                                                                                                                                                              |
 
 ---
 
@@ -230,6 +230,7 @@ If mock data used today's date, charts and insights would show empty data for mo
 The parser is ~25 lines and handles all needed edge cases (quoted fields, escaped quotes, commas in descriptions). Adding Papa Parse (~50KB) would be disproportionate.
 
 **Other notable decisions:**
+
 - `TransactionRow` wrapped with `React.memo` — only re-renders when its own transaction prop changes
 - `DEFAULT_FILTERS` constant in `useTransactionStore` — single source of truth, no duplication
 - `formatCurrency` guards against `NaN` — corrupted localStorage data shows `₹0` not `₹NaN`

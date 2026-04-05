@@ -5,13 +5,15 @@ import { useInsights } from '../../hooks/useInsights';
 import { useAppStore } from '../../store/useAppStore';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { CATEGORY_COLORS } from '../../data/mockData';
+import { format } from 'date-fns';
 
 export default function BudgetGoals() {
   const { budgets, setBudget, resetBudgets } = useBudgetStore();
-  const { categoryTotals } = useInsights();
+  const { categoryTotals, latestDate } = useInsights();
   const { role } = useAppStore();
   const [editing, setEditing] = useState(null);
   const [draft, setDraft] = useState('');
+  const monthLabel = latestDate ? format(latestDate, 'MMMM yyyy') : format(new Date(), 'MMMM yyyy');
 
   const startEdit = (cat, current) => {
     setEditing(cat);
@@ -32,10 +34,12 @@ export default function BudgetGoals() {
         <div className="flex items-center gap-2">
           <Target size={16} className="text-blue-500" />
           <h2 className="text-base font-semibold text-gray-900 dark:text-white">Budget Goals</h2>
+          <span className="text-xs text-gray-400 font-normal">— {monthLabel}</span>
         </div>
         {role === 'admin' && (
           <button
             onClick={resetBudgets}
+            aria-label="Reset all budgets to default"
             className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
           >
             <RotateCcw size={12} /> Reset
@@ -77,7 +81,7 @@ export default function BudgetGoals() {
                     <div className="flex items-center gap-1">
                       <span style={{ color }} className="font-semibold">{formatCurrency(limit)}</span>
                       {role === 'admin' && (
-                        <button onClick={() => startEdit(cat, limit)} className="text-gray-300 hover:text-blue-500 transition-colors">
+                        <button onClick={() => startEdit(cat, limit)} aria-label={`Edit ${cat} budget`} className="text-gray-300 hover:text-blue-500 transition-colors">
                           <Pencil size={11} />
                         </button>
                       )}
@@ -92,7 +96,10 @@ export default function BudgetGoals() {
                 />
               </div>
               {pct >= 100 && (
-                <p className="text-xs text-red-500 mt-0.5">Over budget by {formatCurrency(spent - limit)}</p>
+                <p className="text-xs text-red-500 mt-0.5">⚠ Over budget by {formatCurrency(spent - limit)}</p>
+              )}
+              {pct >= 80 && pct < 100 && (
+                <p className="text-xs text-amber-500 mt-0.5">{pct}% used — approaching limit</p>
               )}
             </div>
           );

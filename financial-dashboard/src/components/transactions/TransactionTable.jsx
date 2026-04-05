@@ -3,7 +3,6 @@ import { useFilteredTransactions } from '../../hooks/useFilteredTransactions';
 import { useAppStore } from '../../store/useAppStore';
 import TransactionRow from './TransactionRow';
 import EmptyState from '../ui/EmptyState';
-import { SkeletonRow } from '../ui/Skeleton';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const PAGE_SIZE = 15;
@@ -11,13 +10,7 @@ const PAGE_SIZE = 15;
 export default function TransactionTable({ onEdit }) {
   const transactions = useFilteredTransactions();
   const { role } = useAppStore();
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 600);
-    return () => clearTimeout(t);
-  }, []);
 
   useEffect(() => { setPage(1); }, [transactions.length]);
 
@@ -37,19 +30,16 @@ export default function TransactionTable({ onEdit }) {
             </tr>
           </thead>
           <tbody>
-            {loading
-              ? [...Array(6)].map((_, i) => <SkeletonRow key={i} />)
-              : paginated.map((t) => <TransactionRow key={t.id} transaction={t} onEdit={onEdit} />)
-            }
+            {paginated.map((t) => <TransactionRow key={t.id} transaction={t} onEdit={onEdit} />)}
           </tbody>
         </table>
-        {!loading && transactions.length === 0 && <EmptyState />}
+        {transactions.length === 0 && <EmptyState />}
       </div>
       <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
         <span className="text-xs text-gray-400">
-          {loading ? 'Loading...' : `${transactions.length} transaction${transactions.length !== 1 ? 's' : ''}`}
+          {`${transactions.length} transaction${transactions.length !== 1 ? 's' : ''}`}
         </span>
-        {!loading && totalPages > 1 && (
+        {totalPages > 1 && (
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}

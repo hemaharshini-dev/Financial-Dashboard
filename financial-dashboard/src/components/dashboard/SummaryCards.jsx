@@ -32,7 +32,7 @@ function SummaryCard({ title, value, icon: Icon, color, isCurrency = true, suffi
     >
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">{title}</span>
-        <div className={`p-2 rounded-lg ${color}`}>
+        <div className={`p-2 rounded-lg bg-gradient-to-br ${color}`}>
           <Icon size={18} className="text-white" />
         </div>
       </div>
@@ -54,10 +54,10 @@ export default function SummaryCards() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <SummaryCard title="Total Balance" value={Math.abs(totalBalance)} icon={Wallet} color="bg-blue-500" />
-      <SummaryCard title="Monthly Income" value={monthlyIncome} icon={TrendingUp} color="bg-emerald-500" />
-      <SummaryCard title="Monthly Expenses" value={monthlyExpenses} icon={TrendingDown} color="bg-red-500" />
-      <SummaryCard title="Savings Rate" value={savingsRate} icon={PiggyBank} color="bg-purple-500" isCurrency={false} suffix="%" />
+      <SummaryCard title="Total Balance" value={Math.abs(totalBalance)} icon={Wallet} color="from-blue-500 to-blue-600" />
+      <SummaryCard title="Monthly Income" value={monthlyIncome} icon={TrendingUp} color="from-emerald-500 to-emerald-600" />
+      <SummaryCard title="Monthly Expenses" value={monthlyExpenses} icon={TrendingDown} color="from-red-500 to-red-600" />
+      <SummaryCard title="Savings Rate" value={savingsRate} icon={PiggyBank} color="from-purple-500 to-purple-600" isCurrency={false} suffix="%" />
     </div>
   );
 }

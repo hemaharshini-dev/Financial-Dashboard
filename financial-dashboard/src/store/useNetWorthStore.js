@@ -24,7 +24,7 @@ export const useNetWorthStore = create((set) => ({
 
   addAsset: (label, amount) =>
     set((s) => {
-      const updated = [...s.assets, { id: Math.random().toString(36).substr(2, 9), label, amount: Number(amount) }];
+      const updated = [...s.assets, { id: Math.random().toString(36).substring(2, 11), label, amount: Number(amount) }];
       save(updated);
       return { assets: updated };
     }),

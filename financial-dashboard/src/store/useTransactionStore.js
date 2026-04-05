@@ -22,7 +22,7 @@ export const useTransactionStore = create((set) => ({
 
   addTransaction: (tx) =>
     set((s) => {
-      const updated = [{ ...tx, id: Math.random().toString(36).substr(2, 9) }, ...s.transactions];
+      const updated = [{ ...tx, id: Math.random().toString(36).substring(2, 11) }, ...s.transactions];
       save(updated);
       return { transactions: updated };
     }),

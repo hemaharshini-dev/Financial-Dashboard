@@ -8,7 +8,7 @@ export default function Layout({ activePage, setActivePage, children }) {
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       <div className="flex-1 flex flex-col min-w-0">
         <Header activePage={activePage} />
-        <main className="flex-1 p-6 pb-24 md:pb-6 overflow-auto">
+        <main className="flex-1 p-4 md:p-6 pb-28 md:pb-6 overflow-auto">
           <AnimatePresence mode="wait">
             <motion.div
               key={activePage}

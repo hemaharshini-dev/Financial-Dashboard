@@ -1,4 +1,6 @@
 import { LayoutDashboard, ArrowLeftRight, Lightbulb } from 'lucide-react';
+import { useFilteredTransactions } from '../../hooks/useFilteredTransactions';
+import { useTransactionStore } from '../../store/useTransactionStore';
 
 const links = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -7,6 +9,10 @@ const links = [
 ];
 
 export default function Sidebar({ activePage, setActivePage }) {
+  const filtered = useFilteredTransactions();
+  const { filters } = useTransactionStore();
+  const hasActiveFilters = filters.search || filters.type !== 'all' || filters.categories.length || filters.dateFrom || filters.dateTo;
+  const txCount = hasActiveFilters ? filtered.length : null;
   return (
     <>
       {/* Desktop Sidebar */}
@@ -29,6 +35,11 @@ export default function Sidebar({ activePage, setActivePage }) {
           >
             <Icon size={18} />
             {label}
+            {id === 'transactions' && txCount !== null && (
+              <span className="ml-auto text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-semibold px-1.5 py-0.5 rounded-full">
+                {txCount}
+              </span>
+            )}
           </button>
         ))}
       </aside>

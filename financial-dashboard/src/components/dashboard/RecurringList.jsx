@@ -17,7 +17,15 @@ export default function RecurringList() {
       return true;
     });
 
-  if (recurring.length === 0) return null;
+  if (recurring.length === 0) return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+      <div className="flex items-center gap-2 mb-2">
+        <RefreshCw size={16} className="text-blue-500" />
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white">Recurring Transactions</h2>
+      </div>
+      <p className="text-sm text-gray-400">No recurring transactions found. Mark a transaction as recurring to see it here.</p>
+    </div>
+  );
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800">

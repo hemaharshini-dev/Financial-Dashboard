@@ -1,11 +1,15 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useInsights } from '../../hooks/useInsights';
 import { useTransactionStore } from '../../store/useTransactionStore';
+import { useAppStore } from '../../store/useAppStore';
 import { CATEGORY_COLORS } from '../../data/mockData';
 
 export default function SpendingBreakdown({ setActivePage }) {
   const { allTimeCategoryTotals } = useInsights();
   const { setFilters } = useTransactionStore();
+  const { darkMode } = useAppStore();
+  const tooltipBg = darkMode ? '#111827' : '#ffffff';
+  const tooltipBorder = darkMode ? '#374151' : '#e5e7eb';
 
   const data = Object.entries(allTimeCategoryTotals)
     .filter(([, v]) => v > 0)
@@ -38,7 +42,7 @@ export default function SpendingBreakdown({ setActivePage }) {
               <Cell key={entry.name} fill={CATEGORY_COLORS[entry.name] || '#6b7280'} />
             ))}
           </Pie>
-          <Tooltip formatter={(v) => [`₹${v.toLocaleString('en-IN')}`, '']} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+          <Tooltip formatter={(v) => [`₹${v.toLocaleString('en-IN')}`, '']} contentStyle={{ borderRadius: '10px', border: `1px solid ${tooltipBorder}`, backgroundColor: tooltipBg, boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
           <Legend iconType="circle" iconSize={8} formatter={(v) => <span style={{ fontSize: 12, color: '#6b7280' }}>{v}</span>} />
         </PieChart>
       </ResponsiveContainer>

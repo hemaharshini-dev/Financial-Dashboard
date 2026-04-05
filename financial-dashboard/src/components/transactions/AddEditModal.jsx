@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
@@ -10,16 +10,36 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
   const { addTransaction, editTransaction } = useTransactionStore();
   const [form, setForm] = useState(empty);
   const [errors, setErrors] = useState({});
+  const firstFieldRef = useRef(null);
 
   useEffect(() => {
     setForm(transaction ? { ...transaction, amount: String(transaction.amount) } : empty);
     setErrors({});
   }, [transaction, isOpen]);
 
+  // Focus first field when modal opens
   useEffect(() => {
-    const handleEsc = (e) => { if (e.key === 'Escape') onClose(); };
-    if (isOpen) document.addEventListener('keydown', handleEsc);
-    return () => document.removeEventListener('keydown', handleEsc);
+    if (isOpen) setTimeout(() => firstFieldRef.current?.focus(), 50);
+  }, [isOpen]);
+
+  // Focus trap
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') { onClose(); return; }
+    if (e.key !== 'Tab') return;
+    const focusable = e.currentTarget.querySelectorAll(
+      'input, select, textarea, button, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) document.addEventListener('keydown', (e) => { if (e.key === 'Escape') onClose(); });
   }, [isOpen, onClose]);
 
   const validate = () => {
@@ -39,10 +59,11 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
     onClose();
   };
 
-  const field = (label, key, type = 'text') => (
+  const field = (label, key, type = 'text', ref = null) => (
     <div>
       <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{label}</label>
       <input
+        ref={ref}
         type={type}
         value={form[key]}
         onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
@@ -59,15 +80,18 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
           <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md p-6 z-10">
+            className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md p-6 z-10"
+            role="dialog" aria-modal="true" aria-labelledby="modal-title"
+            onKeyDown={handleKeyDown}
+          >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h2 id="modal-title" className="text-lg font-semibold text-gray-900 dark:text-white">
                 {transaction ? 'Edit Transaction' : 'Add Transaction'}
               </h2>
-              <button onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><X size={18} /></button>
+              <button onClick={onClose} aria-label="Close modal" className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><X size={18} /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {field('Date', 'date', 'date')}
+              {field('Date', 'date', 'date', firstFieldRef)}
               {field('Description', 'description')}
               {field('Amount (₹)', 'amount', 'number')}
               <div>

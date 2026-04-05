@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import TransactionFilters from '../components/transactions/TransactionFilters';
 import TransactionTable from '../components/transactions/TransactionTable';
 import AddEditModal from '../components/transactions/AddEditModal';
@@ -21,6 +21,19 @@ export default function Transactions() {
 
   const openAdd = () => { setEditTx(null); setModalOpen(true); };
   const openEdit = (tx) => { setEditTx(tx); setModalOpen(true); };
+
+  // Keyboard shortcut: N to open Add Transaction (admin only)
+  useEffect(() => {
+    if (role !== 'admin') return;
+    const handler = (e) => {
+      if (e.key === 'n' && !e.ctrlKey && !e.metaKey && !e.altKey &&
+        !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+        openAdd();
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [role]);
 
   const handleImport = (e) => {
     const file = e.target.files[0];

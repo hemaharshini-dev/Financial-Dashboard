@@ -65,11 +65,13 @@ export default function TransactionFilters() {
       </div>
 
       {/* Category chips */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">
         {CATEGORIES.map((cat) => (
           <button
             key={cat}
             onClick={() => toggleCategory(cat)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCategory(cat); } }}
+            aria-pressed={filters.categories.includes(cat)}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-all border ${
               filters.categories.includes(cat)
                 ? 'bg-blue-600 text-white border-blue-600'

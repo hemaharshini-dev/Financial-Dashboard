@@ -21,7 +21,7 @@ export default function SavingsRate() {
     : '⚠️ Consider reducing expenses';
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 h-full flex flex-col justify-center">
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <PiggyBank size={16} className="text-purple-500" />

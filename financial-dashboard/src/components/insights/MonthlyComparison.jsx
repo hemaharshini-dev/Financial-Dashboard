@@ -23,7 +23,7 @@ export default function MonthlyComparison() {
     : 0;
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 h-full">
       <div className="flex items-start justify-between mb-5">
         <div>
           <div className="flex items-center gap-2 mb-0.5">

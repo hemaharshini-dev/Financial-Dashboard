@@ -15,11 +15,11 @@ export default function InsightsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <motion.div {...fadeUp(0)}><TopSpendingCard /></motion.div>
-        <motion.div {...fadeUp(1)}><SavingsRate /></motion.div>
-        <motion.div {...fadeUp(2)}>
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 h-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+        <motion.div className="h-full" {...fadeUp(0)}><TopSpendingCard /></motion.div>
+        <motion.div className="h-full" {...fadeUp(1)}><SavingsRate /></motion.div>
+        <motion.div className="h-full" {...fadeUp(2)}>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 h-full flex flex-col justify-center">
             <div className="flex items-center gap-2 mb-3">
               <Flame size={16} className="text-orange-500" />
               <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Days Since Large Expense</span>
@@ -32,10 +32,10 @@ export default function InsightsPanel() {
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div {...fadeUp(3)}><MonthlyComparison /></motion.div>
-        <motion.div {...fadeUp(4)}>
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
+        <motion.div className="h-full" {...fadeUp(3)}><MonthlyComparison /></motion.div>
+        <motion.div className="h-full" {...fadeUp(4)}>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 h-full flex flex-col justify-center">
             <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Top 3 Expense Categories</h2>
             <div className="space-y-4">
               {top3Categories.map(({ category, amount }, i) => {

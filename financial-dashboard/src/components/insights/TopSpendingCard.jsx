@@ -10,7 +10,7 @@ export default function TopSpendingCard() {
   const color = CATEGORY_COLORS[topCategory.category] || '#6b7280';
 
   return (
-    <div className="rounded-2xl p-5 shadow-sm border overflow-hidden relative"
+    <div className="rounded-2xl p-5 shadow-sm border overflow-hidden relative h-full flex flex-col justify-center"
       style={{
         backgroundColor: color + '12',
         borderColor: color + '30',

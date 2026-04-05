@@ -8,11 +8,18 @@ import { formatCurrency } from '../utils/formatCurrency';
 import { useTransactionStore } from '../store/useTransactionStore';
 import { useAppStore } from '../store/useAppStore';
 import { format } from 'date-fns';
+import { AlertCircle, Tag, TrendingDown } from 'lucide-react';
+import { CATEGORY_COLORS } from '../data/mockData';
 
-function QuickStatCard({ title, children }) {
+function QuickStatCard({ icon: Icon, iconColor, iconBg, title, children }) {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800">
-      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">{title}</p>
+      <div className="flex items-center gap-2 mb-3">
+        <div className={`p-1.5 rounded-lg ${iconBg}`}>
+          <Icon size={14} className={iconColor} />
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{title}</p>
+      </div>
       {children}
     </div>
   );
@@ -25,6 +32,8 @@ function DashboardContent({ setActivePage }) {
   const thisMonth = latestMonth || format(new Date(), 'yyyy-MM');
   const thisMonthTxs = transactions.filter((t) => t.type === 'expense' && t.date.startsWith(thisMonth));
   const largest = [...thisMonthTxs].sort((a, b) => b.amount - a.amount)[0];
+  const categoryColor = topCategory ? (CATEGORY_COLORS[topCategory.category] || '#6b7280') : '#6b7280';
+  const forecastUp = spendingForecast > monthlyComparison.lastMonthExpenses;
 
   return (
     <div className="space-y-6">
@@ -37,27 +46,42 @@ function DashboardContent({ setActivePage }) {
       )}
       {widgets.quickStats && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <QuickStatCard title="Largest Expense This Month">
+          <QuickStatCard
+            icon={AlertCircle} iconColor="text-red-500" iconBg="bg-red-50 dark:bg-red-900/20"
+            title="Largest Expense This Month"
+          >
             {largest ? (
               <>
                 <p className="text-xl font-bold text-red-500">{formatCurrency(largest.amount)}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{largest.description}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 truncate">{largest.description}</p>
               </>
-            ) : <p className="text-sm text-gray-400 mt-1">No expenses this month</p>}
+            ) : <p className="text-sm text-gray-400">No expenses this month</p>}
           </QuickStatCard>
-          <QuickStatCard title="Most Active Category">
+
+          <QuickStatCard
+            icon={Tag} iconColor="text-purple-500" iconBg="bg-purple-50 dark:bg-purple-900/20"
+            title="Most Active Category"
+          >
             {topCategory ? (
               <>
-                <p className="text-xl font-bold text-gray-900 dark:text-white">{topCategory.category}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total: {formatCurrency(topCategory.amount)}</p>
+                <p className="text-xl font-bold" style={{ color: categoryColor }}>{topCategory.category}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{formatCurrency(topCategory.amount)} total</p>
               </>
-            ) : <p className="text-sm text-gray-400 mt-1">No data</p>}
+            ) : <p className="text-sm text-gray-400">No data</p>}
           </QuickStatCard>
-          <QuickStatCard title="Projected Month-End Spend">
-            <p className={`text-xl font-bold ${spendingForecast > monthlyComparison.lastMonthExpenses ? 'text-red-500' : 'text-emerald-500'}`}>
+
+          <QuickStatCard
+            icon={TrendingDown}
+            iconColor={forecastUp ? 'text-red-500' : 'text-emerald-500'}
+            iconBg={forecastUp ? 'bg-red-50 dark:bg-red-900/20' : 'bg-emerald-50 dark:bg-emerald-900/20'}
+            title="Projected Month-End Spend"
+          >
+            <p className={`text-xl font-bold ${forecastUp ? 'text-red-500' : 'text-emerald-500'}`}>
               {formatCurrency(spendingForecast)}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Based on current pace</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+              {forecastUp ? '↑ Higher' : '↓ Lower'} than last month
+            </p>
           </QuickStatCard>
         </div>
       )}

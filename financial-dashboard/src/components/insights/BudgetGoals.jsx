@@ -4,7 +4,6 @@ import { useBudgetStore } from '../../store/useBudgetStore';
 import { useInsightsContext } from '../../context/InsightsContext';
 import { useAppStore } from '../../store/useAppStore';
 import { formatCurrency } from '../../utils/formatCurrency';
-import { CATEGORY_COLORS } from '../../data/mockData';
 import { format } from 'date-fns';
 
 export default function BudgetGoals() {
@@ -50,17 +49,26 @@ export default function BudgetGoals() {
         {categories.map((cat) => {
           const limit = budgets[cat];
           const spent = categoryTotals[cat] || 0;
-          const pct = Math.min(100, Math.round((spent / limit) * 100));
-          const color = pct >= 100 ? '#ef4444' : pct >= 80 ? '#f59e0b' : '#10b981';
-          const barColor = CATEGORY_COLORS[cat] || color;
+          const rawPct = Math.round((spent / limit) * 100);
+          const pct = Math.min(100, rawPct);
+          const statusColor = rawPct >= 100 ? '#ef4444' : rawPct >= 80 ? '#f59e0b' : '#10b981';
+          const statusLabel = rawPct >= 100 ? 'Over budget' : rawPct >= 80 ? 'Approaching limit' : 'On track';
+          const statusBg = rawPct >= 100
+            ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
+            : rawPct >= 80
+            ? 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400'
+            : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
 
           return (
             <div key={cat}>
-              <div className="flex items-center justify-between text-sm mb-1">
-                <span className="font-medium text-gray-700 dark:text-gray-300">{cat}</span>
+              <div className="flex items-center justify-between text-sm mb-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-500 dark:text-gray-400">
-                    {formatCurrency(spent)} /&nbsp;
+                  <span className="font-medium text-gray-700 dark:text-gray-300">{cat}</span>
+                  <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${statusBg}`}>{statusLabel}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500 dark:text-gray-400 text-xs">
+                    {formatCurrency(spent)} / {formatCurrency(limit)}
                   </span>
                   {editing === cat && role === 'admin' ? (
                     <div className="flex items-center gap-1">
@@ -78,29 +86,26 @@ export default function BudgetGoals() {
                       </button>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1">
-                      <span style={{ color }} className="font-semibold">{formatCurrency(limit)}</span>
-                      {role === 'admin' && (
-                        <button onClick={() => startEdit(cat, limit)} aria-label={`Edit ${cat} budget`} className="text-gray-300 hover:text-blue-500 transition-colors">
-                          <Pencil size={11} />
-                        </button>
-                      )}
-                    </div>
+                    role === 'admin' && (
+                      <button onClick={() => startEdit(cat, limit)} aria-label={`Edit ${cat} budget`} className="text-gray-300 hover:text-blue-500 transition-colors">
+                        <Pencil size={11} />
+                      </button>
+                    )
                   )}
                 </div>
               </div>
-              <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+              <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-500"
-                  style={{ width: `${pct}%`, backgroundColor: pct >= 100 ? '#ef4444' : pct >= 80 ? '#f59e0b' : barColor }}
+                  style={{ width: `${pct}%`, backgroundColor: statusColor }}
                 />
               </div>
-              {pct >= 100 && (
-                <p className="text-xs text-red-500 mt-0.5">⚠ Over budget by {formatCurrency(spent - limit)}</p>
-              )}
-              {pct >= 80 && pct < 100 && (
-                <p className="text-xs text-amber-500 mt-0.5">{pct}% used — approaching limit</p>
-              )}
+              <div className="flex justify-between mt-1">
+                <span className="text-xs text-gray-400">{rawPct}% used</span>
+                {rawPct >= 100 && (
+                  <span className="text-xs text-red-500 font-medium">+{formatCurrency(spent - limit)} over</span>
+                )}
+              </div>
             </div>
           );
         })}

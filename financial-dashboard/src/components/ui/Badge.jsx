@@ -8,7 +8,7 @@ const typeStyles = {
 export default function Badge({ label, variant = 'category' }) {
   if (variant === 'type') {
     return (
-      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${typeStyles[label] || ''}`}>
+      <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${typeStyles[label] || ''}`}>
         {label}
       </span>
     );

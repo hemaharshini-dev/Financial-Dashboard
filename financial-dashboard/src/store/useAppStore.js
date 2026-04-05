@@ -19,6 +19,7 @@ export const useAppStore = create((set) => ({
   role: getInitial('fd_role', 'viewer'),
   darkMode: getInitialDarkMode(),
   widgets: getInitial('fd_widgets', defaultWidgets),
+  sidebarCollapsed: getInitial('fd_sidebar', false),
 
   setRole: (role) => {
     localStorage.setItem('fd_role', JSON.stringify(role));
@@ -37,5 +38,12 @@ export const useAppStore = create((set) => ({
       const next = { ...s.widgets, [key]: !s.widgets[key] };
       localStorage.setItem('fd_widgets', JSON.stringify(next));
       return { widgets: next };
+    }),
+
+  toggleSidebar: () =>
+    set((s) => {
+      const next = !s.sidebarCollapsed;
+      localStorage.setItem('fd_sidebar', JSON.stringify(next));
+      return { sidebarCollapsed: next };
     }),
 }));

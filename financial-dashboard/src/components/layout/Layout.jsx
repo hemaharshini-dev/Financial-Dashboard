@@ -4,7 +4,7 @@ import Header from './Header';
 
 export default function Layout({ activePage, setActivePage, children }) {
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 overflow-x-hidden">
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       <div className="flex-1 flex flex-col min-w-0">
         <Header activePage={activePage} />

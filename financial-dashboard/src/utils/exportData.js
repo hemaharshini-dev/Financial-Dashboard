@@ -1,8 +1,16 @@
 export const exportCSV = (transactions) => {
-  const headers = ['Date', 'Description', 'Category', 'Amount', 'Type'];
-  const rows = transactions.map((t) => [t.date, t.description, t.category, t.amount, t.type]);
+  const headers = ['Date', 'Description', 'Category', 'Amount', 'Type', 'Notes', 'Recurring'];
+  const rows = transactions.map((t) => [
+    `"${t.date}"`,
+    `"${(t.description || '').replace(/"/g, '""')}"`,
+    `"${t.category}"`,
+    t.amount,
+    `"${t.type}"`,
+    `"${(t.notes || '').replace(/"/g, '""')}"`,
+    `"${t.recurring ? 'true' : 'false'}"`,
+  ]);
   const csv = [headers, ...rows].map((r) => r.join(',')).join('\n');
-  download(csv, 'transactions.csv', 'text/csv');
+  download(csv, 'transactions.csv', 'text/csv;charset=utf-8;');
 };
 
 export const exportJSON = (transactions) => {

@@ -22,7 +22,7 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
     if (isOpen) setTimeout(() => firstFieldRef.current?.focus(), 50);
   }, [isOpen]);
 
-  // Focus trap
+  // Focus trap — also handles Escape; no separate document listener needed
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') { onClose(); return; }
     if (e.key !== 'Tab') return;
@@ -37,10 +37,6 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
       if (document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
   };
-
-  useEffect(() => {
-    if (isOpen) document.addEventListener('keydown', (e) => { if (e.key === 'Escape') onClose(); });
-  }, [isOpen, onClose]);
 
   const validate = () => {
     const e = {};

@@ -10,7 +10,6 @@ export default function SavingsRate() {
   const clamped = Math.max(0, Math.min(100, savingsRate));
   const savedAmount = monthlyComparison.thisMonthIncome - monthlyComparison.thisMonthExpenses;
 
-  const gradientId = 'savingsGrad';
   const color = clamped >= TARGET_PCT ? '#10b981' : clamped >= 10 ? '#f59e0b' : '#ef4444';
   const gradientFrom = clamped >= TARGET_PCT ? '#34d399' : clamped >= 10 ? '#fbbf24' : '#f87171';
   const gradientTo = clamped >= TARGET_PCT ? '#059669' : clamped >= 10 ? '#d97706' : '#dc2626';

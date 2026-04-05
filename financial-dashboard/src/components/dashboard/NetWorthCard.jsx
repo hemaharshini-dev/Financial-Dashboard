@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Landmark, Plus, Trash2, TrendingUp } from 'lucide-react';
+import { Landmark, Plus, Trash2 } from 'lucide-react';
 import { useNetWorthStore } from '../../store/useNetWorthStore';
 import { useAppStore } from '../../store/useAppStore';
 import { formatCurrency } from '../../utils/formatCurrency';

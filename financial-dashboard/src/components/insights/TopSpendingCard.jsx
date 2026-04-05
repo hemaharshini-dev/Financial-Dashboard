@@ -1,10 +1,10 @@
 import { TrendingDown } from 'lucide-react';
-import { useInsights } from '../../hooks/useInsights';
+import { useInsightsContext } from '../../context/InsightsContext';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { CATEGORY_COLORS } from '../../data/mockData';
 
 export default function TopSpendingCard() {
-  const { topCategory, totalExpenses } = useInsights();
+  const { topCategory, totalExpenses } = useInsightsContext();
   if (!topCategory) return null;
 
   const pct = totalExpenses > 0 ? Math.round((topCategory.amount / totalExpenses) * 100) : 0;

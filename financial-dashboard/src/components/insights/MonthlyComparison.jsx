@@ -1,10 +1,10 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useInsights } from '../../hooks/useInsights';
+import { useInsightsContext } from '../../context/InsightsContext';
 import { useAppStore } from '../../store/useAppStore';
 import { format, subMonths } from 'date-fns';
 
 export default function MonthlyComparison() {
-  const { monthlyComparison, latestDate } = useInsights();
+  const { monthlyComparison, latestDate } = useInsightsContext();
   const { darkMode } = useAppStore();
   const anchor = latestDate || new Date();
   const gridColor = darkMode ? '#374151' : '#e5e7eb';

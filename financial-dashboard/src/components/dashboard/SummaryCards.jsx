@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Wallet, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
-import { useInsights } from '../../hooks/useInsights';
+import { useInsightsContext } from '../../context/InsightsContext';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { format } from 'date-fns';
 
@@ -45,7 +45,7 @@ function SummaryCard({ title, value, icon: Icon, color, isCurrency = true, suffi
 
 export default function SummaryCards() {
   const { transactions } = useTransactionStore();
-  const { savingsRate, latestMonth } = useInsights();
+  const { savingsRate, latestMonth } = useInsightsContext();
   const thisMonth = latestMonth || format(new Date(), 'yyyy-MM');
 
   const totalBalance = transactions.reduce((s, t) => t.type === 'income' ? s + t.amount : s - t.amount, 0);

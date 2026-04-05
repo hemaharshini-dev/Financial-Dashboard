@@ -3,28 +3,25 @@ import BalanceTrendChart from '../components/dashboard/BalanceTrendChart';
 import SpendingBreakdown from '../components/dashboard/SpendingBreakdown';
 import RecurringList from '../components/dashboard/RecurringList';
 import NetWorthCard from '../components/dashboard/NetWorthCard';
-import { useInsights } from '../hooks/useInsights';
+import { InsightsProvider, useInsightsContext } from '../context/InsightsContext';
 import { formatCurrency } from '../utils/formatCurrency';
 import { useTransactionStore } from '../store/useTransactionStore';
 import { useAppStore } from '../store/useAppStore';
 import { format } from 'date-fns';
 
-function QuickStatCard({ title, icon, children }) {
+function QuickStatCard({ title, children }) {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800">
-      <div className="flex items-center gap-1.5 mb-1">
-        {icon}
-        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{title}</p>
-      </div>
+      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">{title}</p>
       {children}
     </div>
   );
 }
 
-export default function Dashboard({ setActivePage }) {
+function DashboardContent({ setActivePage }) {
   const { transactions } = useTransactionStore();
   const { widgets } = useAppStore();
-  const { topCategory, latestMonth, spendingForecast, monthlyComparison } = useInsights();
+  const { topCategory, latestMonth, spendingForecast, monthlyComparison } = useInsightsContext();
   const thisMonth = latestMonth || format(new Date(), 'yyyy-MM');
   const thisMonthTxs = transactions.filter((t) => t.type === 'expense' && t.date.startsWith(thisMonth));
   const largest = [...thisMonthTxs].sort((a, b) => b.amount - a.amount)[0];
@@ -67,5 +64,13 @@ export default function Dashboard({ setActivePage }) {
       {widgets.recurring && <RecurringList />}
       {widgets.netWorth && <NetWorthCard />}
     </div>
+  );
+}
+
+export default function Dashboard({ setActivePage }) {
+  return (
+    <InsightsProvider>
+      <DashboardContent setActivePage={setActivePage} />
+    </InsightsProvider>
   );
 }

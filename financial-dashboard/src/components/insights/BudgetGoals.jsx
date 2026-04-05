@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Target, Pencil, Check, RotateCcw } from 'lucide-react';
 import { useBudgetStore } from '../../store/useBudgetStore';
-import { useInsights } from '../../hooks/useInsights';
+import { useInsightsContext } from '../../context/InsightsContext';
 import { useAppStore } from '../../store/useAppStore';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { CATEGORY_COLORS } from '../../data/mockData';
@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 
 export default function BudgetGoals() {
   const { budgets, setBudget, resetBudgets } = useBudgetStore();
-  const { categoryTotals, latestDate } = useInsights();
+  const { categoryTotals, latestDate } = useInsightsContext();
   const { role } = useAppStore();
   const [editing, setEditing] = useState(null);
   const [draft, setDraft] = useState('');

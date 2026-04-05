@@ -3,7 +3,7 @@ import TopSpendingCard from './TopSpendingCard';
 import MonthlyComparison from './MonthlyComparison';
 import SavingsRate from './SavingsRate';
 import BudgetGoals from './BudgetGoals';
-import { useInsights } from '../../hooks/useInsights';
+import { useInsightsContext } from '../../context/InsightsContext';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { CATEGORY_COLORS } from '../../data/mockData';
 import { Flame } from 'lucide-react';
@@ -11,7 +11,7 @@ import { Flame } from 'lucide-react';
 const fadeUp = (i) => ({ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.35, delay: i * 0.08 } });
 
 export default function InsightsPanel() {
-  const { top3Categories, spendingStreak } = useInsights();
+  const { top3Categories, spendingStreak } = useInsightsContext();
 
   return (
     <div className="space-y-6">

@@ -1,11 +1,11 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { useInsights } from '../../hooks/useInsights';
+import { useInsightsContext } from '../../context/InsightsContext';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { useAppStore } from '../../store/useAppStore';
 import { CATEGORY_COLORS } from '../../data/mockData';
 
 export default function SpendingBreakdown({ setActivePage }) {
-  const { allTimeCategoryTotals } = useInsights();
+  const { allTimeCategoryTotals } = useInsightsContext();
   const { setFilters } = useTransactionStore();
   const { darkMode } = useAppStore();
   const tooltipBg = darkMode ? '#111827' : '#ffffff';

@@ -1,13 +1,12 @@
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
-// Clear stale localStorage data when mock data changes
-if (typeof window !== 'undefined') {
-  const version = 'v3-recurring';
-  if (localStorage.getItem('fd_data_version') !== version) {
-    localStorage.removeItem('fd_transactions');
-    localStorage.setItem('fd_data_version', version);
-  }
-}
+// Auto-invalidate localStorage when mock data changes.
+// Hash is derived from transaction count + first/last dates + total amount sum.
+// No need to manually bump a version string.
+const computeHash = (txns) => {
+  const sig = `${txns.length}|${txns[0]?.date}|${txns[txns.length - 1]?.date}|${txns.reduce((s, t) => s + t.amount, 0)}`;
+  return sig.split('').reduce((h, c) => (Math.imul(31, h) + c.charCodeAt(0)) | 0, 0).toString(36);
+};
 
 export const mockTransactions = [
   { id: generateId(), date: '2025-01-03', description: 'Monthly Salary', category: 'Salary', amount: 65000, type: 'income', recurring: true },
@@ -79,6 +78,15 @@ export const mockTransactions = [
 ];
 
 export const CATEGORIES = ['Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 'Utilities', 'Salary', 'Freelance'];
+
+// Auto-invalidate localStorage if mock data has changed
+if (typeof window !== 'undefined') {
+  const hash = computeHash(mockTransactions);
+  if (localStorage.getItem('fd_data_version') !== hash) {
+    localStorage.removeItem('fd_transactions');
+    localStorage.setItem('fd_data_version', hash);
+  }
+}
 
 export const CATEGORY_COLORS = {
   Food: '#f97316',

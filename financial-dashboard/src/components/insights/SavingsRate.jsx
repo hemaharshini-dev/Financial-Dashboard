@@ -1,8 +1,8 @@
 import { PiggyBank } from 'lucide-react';
-import { useInsights } from '../../hooks/useInsights';
+import { useInsightsContext } from '../../context/InsightsContext';
 
 export default function SavingsRate() {
-  const { savingsRate } = useInsights();
+  const { savingsRate } = useInsightsContext();
   const clamped = Math.max(0, Math.min(100, savingsRate));
   const color = clamped >= 20 ? '#10b981' : clamped >= 10 ? '#f59e0b' : '#ef4444';
 

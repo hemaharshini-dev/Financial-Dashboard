@@ -1,4 +1,5 @@
 import InsightsPanel from '../components/insights/InsightsPanel';
+import { InsightsProvider } from '../context/InsightsContext';
 import { SkeletonChart } from '../components/ui/Skeleton';
 import { useState, useEffect } from 'react';
 
@@ -20,5 +21,9 @@ export default function Insights() {
     </div>
   );
 
-  return <InsightsPanel />;
+  return (
+    <InsightsProvider>
+      <InsightsPanel />
+    </InsightsProvider>
+  );
 }

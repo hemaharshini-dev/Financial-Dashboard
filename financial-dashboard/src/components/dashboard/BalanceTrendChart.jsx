@@ -1,9 +1,9 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { useInsights } from '../../hooks/useInsights';
+import { useInsightsContext } from '../../context/InsightsContext';
 import { useAppStore } from '../../store/useAppStore';
 
 export default function BalanceTrendChart() {
-  const { balanceTrend } = useInsights();
+  const { balanceTrend } = useInsightsContext();
   const { darkMode } = useAppStore();
 
   const gridColor = darkMode ? '#374151' : '#e5e7eb';

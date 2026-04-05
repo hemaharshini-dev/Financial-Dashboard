@@ -21,7 +21,7 @@ export default function App() {
   return (
     <ToastProvider>
       <Layout activePage={activePage} setActivePage={setActivePage}>
-        <Page />
+        <Page setActivePage={setActivePage} />
       </Layout>
     </ToastProvider>
   );

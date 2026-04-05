@@ -13,7 +13,10 @@ export default function TransactionRow({ transaction, onEdit }) {
   return (
     <tr className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
       <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{formatDate(transaction.date)}</td>
-      <td className="py-3 px-4 text-sm text-gray-900 dark:text-white font-medium">{transaction.description}</td>
+      <td className="py-3 px-4">
+        <p className="text-sm text-gray-900 dark:text-white font-medium">{transaction.description}</p>
+        {transaction.notes && <p className="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{transaction.notes}</p>}
+      </td>
       <td className="py-3 px-4"><Badge label={transaction.category} /></td>
       <td className="py-3 px-4"><Badge label={transaction.type} variant="type" /></td>
       <td className={`py-3 px-4 text-sm font-semibold text-right whitespace-nowrap ${isExpense ? 'text-red-500' : 'text-emerald-500'}`}>

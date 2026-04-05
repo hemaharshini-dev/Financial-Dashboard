@@ -10,7 +10,11 @@ export const useFilteredTransactions = () => {
 
     if (search) {
       const q = search.toLowerCase();
-      list = list.filter((t) => t.description.toLowerCase().includes(q) || t.category.toLowerCase().includes(q));
+      list = list.filter((t) =>
+        t.description.toLowerCase().includes(q) ||
+        t.category.toLowerCase().includes(q) ||
+        (t.notes && t.notes.toLowerCase().includes(q))
+      );
     }
     if (type !== 'all') list = list.filter((t) => t.type === type);
     if (categories.length) list = list.filter((t) => categories.includes(t.category));

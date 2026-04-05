@@ -1,21 +1,39 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useInsights } from '../../hooks/useInsights';
+import { useTransactionStore } from '../../store/useTransactionStore';
 import { CATEGORY_COLORS } from '../../data/mockData';
 
-export default function SpendingBreakdown() {
-  const { categoryTotals } = useInsights();
+export default function SpendingBreakdown({ setActivePage }) {
+  const { allTimeCategoryTotals } = useInsights();
+  const { setFilters } = useTransactionStore();
 
-  const data = Object.entries(categoryTotals)
+  const data = Object.entries(allTimeCategoryTotals)
     .filter(([, v]) => v > 0)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
 
+  const handleClick = (entry) => {
+    if (!setActivePage) return;
+    setFilters({ categories: [entry.name] });
+    setActivePage('transactions');
+  };
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800">
-      <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Spending Breakdown</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white">Spending Breakdown</h2>
+        {setActivePage && <span className="text-xs text-gray-400">Click a slice to filter</span>}
+      </div>
       <ResponsiveContainer width="100%" height={220}>
         <PieChart>
-          <Pie data={data} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value">
+          <Pie
+            data={data}
+            cx="50%" cy="50%"
+            innerRadius={55} outerRadius={85}
+            paddingAngle={3} dataKey="value"
+            cursor={setActivePage ? 'pointer' : 'default'}
+            onClick={handleClick}
+          >
             {data.map((entry) => (
               <Cell key={entry.name} fill={CATEGORY_COLORS[entry.name] || '#6b7280'} />
             ))}

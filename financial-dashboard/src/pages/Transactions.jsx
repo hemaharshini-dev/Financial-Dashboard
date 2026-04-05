@@ -1,21 +1,47 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import TransactionFilters from '../components/transactions/TransactionFilters';
 import TransactionTable from '../components/transactions/TransactionTable';
 import AddEditModal from '../components/transactions/AddEditModal';
 import { useAppStore } from '../store/useAppStore';
 import { useTransactionStore } from '../store/useTransactionStore';
 import { exportCSV, exportJSON } from '../utils/exportData';
+import { parseCSV } from '../utils/importData';
 import { useFilteredTransactions } from '../hooks/useFilteredTransactions';
-import { Plus, Download } from 'lucide-react';
+import { useToast } from '../components/ui/Toast';
+import { Plus, Download, Upload } from 'lucide-react';
 
 export default function Transactions() {
   const { role } = useAppStore();
+  const { addTransaction } = useTransactionStore();
+  const toast = useToast();
   const [modalOpen, setModalOpen] = useState(false);
   const [editTx, setEditTx] = useState(null);
   const filtered = useFilteredTransactions();
+  const fileInputRef = useRef(null);
 
   const openAdd = () => { setEditTx(null); setModalOpen(true); };
   const openEdit = (tx) => { setEditTx(tx); setModalOpen(true); };
+
+  const handleImport = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const { results, errors } = parseCSV(ev.target.result);
+        results.forEach((tx) => addTransaction(tx));
+        if (errors.length) {
+          toast(`Imported ${results.length} rows. ${errors.length} skipped.`, 'info');
+        } else {
+          toast(`${results.length} transaction${results.length !== 1 ? 's' : ''} imported successfully`);
+        }
+      } catch (err) {
+        toast(err.message, 'info');
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  };
 
   return (
     <div className="space-y-4">
@@ -24,6 +50,10 @@ export default function Transactions() {
         <div className="flex items-center gap-2">
           {role === 'admin' && (
             <>
+              <input ref={fileInputRef} type="file" accept=".csv" onChange={handleImport} className="hidden" />
+              <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <Upload size={14} /> Import CSV
+              </button>
               <button onClick={() => exportCSV(filtered)} className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 <Download size={14} /> CSV
               </button>

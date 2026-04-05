@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { CATEGORIES } from '../../data/mockData';
 
-const empty = { date: '', description: '', category: 'Food', amount: '', type: 'expense' };
+const empty = { date: '', description: '', category: 'Food', amount: '', type: 'expense', recurring: false, notes: '' };
 
 export default function AddEditModal({ isOpen, onClose, transaction }) {
   const { addTransaction, editTransaction } = useTransactionStore();
@@ -88,6 +88,25 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
                   ))}
                 </div>
               </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Notes (optional)</label>
+                <textarea
+                  value={form.notes || ''}
+                  onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+                  rows={2}
+                  placeholder="Add a note..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                />
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={!!form.recurring}
+                  onChange={(e) => setForm((f) => ({ ...f, recurring: e.target.checked }))}
+                  className="accent-blue-600 w-4 h-4"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">Recurring monthly</span>
+              </label>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={onClose} className="flex-1 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Cancel</button>
                 <button type="submit" className="flex-1 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">

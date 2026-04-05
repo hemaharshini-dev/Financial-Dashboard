@@ -15,13 +15,21 @@ export const useInsights = () => {
     const thisMonth = format(latestDate, 'yyyy-MM');
     const lastMonth = format(subMonths(latestDate, 1), 'yyyy-MM');
 
-    // Category totals
-    const categoryTotals = expenses.reduce((acc, t) => {
+    // Category totals — current month only (used for budget goals)
+    const categoryTotals = expenses
+      .filter((t) => t.date.startsWith(thisMonth))
+      .reduce((acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + t.amount;
+        return acc;
+      }, {});
+
+    // All-time category totals (used for pie chart + top 3)
+    const allTimeCategoryTotals = expenses.reduce((acc, t) => {
       acc[t.category] = (acc[t.category] || 0) + t.amount;
       return acc;
     }, {});
 
-    const top3Categories = Object.entries(categoryTotals)
+    const top3Categories = Object.entries(allTimeCategoryTotals)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
       .map(([category, amount]) => ({ category, amount }));
@@ -54,6 +62,14 @@ export const useInsights = () => {
       return { month: label, balance: inc - exp, income: inc, expenses: exp };
     });
 
+    // Spending forecast based on current month pace
+    const today = new Date();
+    const dayOfMonth = today.getDate();
+    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const spendingForecast = dayOfMonth > 0
+      ? Math.round((thisMonthExpenses / dayOfMonth) * daysInMonth)
+      : 0;
+
     return {
       topCategory,
       top3Categories,
@@ -61,11 +77,13 @@ export const useInsights = () => {
       savingsRate,
       spendingStreak,
       balanceTrend,
+      spendingForecast,
       latestMonth: thisMonth,
       prevMonth: lastMonth,
       latestDate,
       monthlyComparison: { thisMonthIncome, thisMonthExpenses, lastMonthIncome, lastMonthExpenses },
       categoryTotals,
+      allTimeCategoryTotals,
     };
   }, [transactions]);
 };

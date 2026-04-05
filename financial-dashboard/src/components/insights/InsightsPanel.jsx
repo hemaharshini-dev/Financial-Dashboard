@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import TopSpendingCard from './TopSpendingCard';
 import MonthlyComparison from './MonthlyComparison';
 import SavingsRate from './SavingsRate';
+import BudgetGoals from './BudgetGoals';
 import { useInsights } from '../../hooks/useInsights';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { CATEGORY_COLORS } from '../../data/mockData';
@@ -58,6 +59,9 @@ export default function InsightsPanel() {
           </div>
         </motion.div>
       </div>
+      <motion.div {...fadeUp(5)}>
+        <BudgetGoals />
+      </motion.div>
     </div>
   );
 }

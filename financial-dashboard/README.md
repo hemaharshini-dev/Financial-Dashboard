@@ -21,6 +21,8 @@ A clean, interactive financial dashboard built with React + Vite. Track transact
 
 ## Setup & Run
 
+**Prerequisites:** Node.js 18+ and npm
+
 ```bash
 cd financial-dashboard
 npm install
@@ -28,6 +30,37 @@ npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173)
+
+```bash
+# Production build
+npm run build
+npm run preview
+```
+
+---
+
+## Approach & Key Design Decisions
+
+### Why Zustand over Redux or Context?
+Zustand gives a clean store-per-concern pattern with zero boilerplate. Each store (`useTransactionStore`, `useAppStore`, `useBudgetStore`, `useNetWorthStore`) is independently testable and has a single responsibility. Redux would add unnecessary complexity for a frontend-only app with no async middleware needs.
+
+### Why no react-router?
+The assignment requires no backend and has only 3 pages. Hash-based routing (`window.location.hash`) achieves deep-linking and refresh-persistence in ~15 lines with zero dependencies. Adding react-router would be over-engineering for this scope.
+
+### Why InsightsContext?
+`useInsights` is an expensive computation (filtering, grouping, sorting 60 transactions across 5 sub-hooks). Without context, every child component that calls `useInsights()` runs the full computation independently. `InsightsProvider` wraps each page so the computation runs exactly once and all children share the result via `useInsightsContext()`.
+
+### Why split useInsights into 5 sub-hooks?
+A single large `useMemo` with `[transactions]` as dependency recalculates everything on every transaction change. Splitting into `useDateAnchors`, `useMonthlyTotals`, `useCategoryTotals`, `useBalanceTrend`, `useSpendingStreak` means each sub-hook only re-runs when its specific inputs change — e.g. `useBalanceTrend` only re-runs when `latestDate` changes, not when savings rate changes.
+
+### Why localStorage over sessionStorage or IndexedDB?
+LocalStorage is synchronous, universally supported, and sufficient for 60–200 transactions. The data is small (< 50KB). IndexedDB would be appropriate at thousands of records. SessionStorage would lose data on tab close, which is wrong for a finance app.
+
+### Why mock data anchored to June 2025 instead of today?
+If mock data used today's date, the Spending Forecast and Monthly Comparison would show empty current-month data for most of the year. Anchoring to the latest transaction date means charts and insights always show meaningful data regardless of when the app is opened.
+
+### Why RFC 4180 CSV parser instead of a library?
+The import parser is ~25 lines and handles all edge cases needed (quoted fields, escaped quotes, commas in descriptions). Adding a CSV library (Papa Parse ~50KB) for this use case would be disproportionate.
 
 ---
 
@@ -228,6 +261,33 @@ src/
 ├── utils/            # formatCurrency, formatDate, exportData (CSV + JSON), importData (CSV parse)
 └── pages/            # Dashboard (InsightsProvider + WelcomeBanner), Transactions, Insights
 ```
+
+---
+
+## Optional Enhancements Implemented
+
+All optional enhancements from the assignment spec were implemented, plus several additional ones:
+
+| Enhancement | Details |
+|---|---|
+| ✅ Dark mode | System preference detected on first load; toggled via header; persisted |
+| ✅ localStorage persistence | All data survives page refresh — transactions, budgets, assets, role, preferences |
+| ✅ Export functionality | CSV (with notes + recurring columns, RFC 4180 quoted) and JSON export |
+| ✅ Advanced filtering | Multi-select category chips, date range, type filter, sort — all combinable |
+| ✅ Animations & transitions | Framer Motion throughout — stagger, count-up, hover lift, page transitions |
+| ✅ Import CSV | Bulk import with RFC 4180 parser, row-level validation, error reporting |
+| ✅ Budget Goals | Per-category monthly limits with unified color system, inline editing |
+| ✅ Net Worth Tracker | Assets + liabilities with ratio bar and hero net worth number |
+| ✅ Recurring Transactions | Done/Pending status, monthly commitment totals |
+| ✅ Spending Forecast | Projected month-end spend anchored to latest transaction date |
+| ✅ Smart Alerts | Auto-derived from savings rate, spending trends, and budget overruns |
+| ✅ Collapsible Sidebar | Edge toggle button, icon-only collapsed state with tooltips |
+| ✅ Customizable Widgets | Show/hide any of 6 dashboard sections, persisted |
+| ✅ Onboarding Guide | First-visit inline banner, re-openable via `?` in header |
+| ✅ Keyboard shortcuts | `N` to add transaction, `Escape` to close modal |
+| ✅ Drill-down navigation | Click pie chart slice → Transactions filtered by category |
+| ✅ Error boundaries | Crash recovery without taking down the whole app |
+| ✅ Hash-based routing | Deep-linking — refresh restores the correct page |
 
 ---
 

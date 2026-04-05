@@ -1,10 +1,31 @@
 import { CATEGORIES } from '../data/mockData';
 
+// Properly parse a CSV line respecting quoted fields
+const parseCSVLine = (line) => {
+  const values = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') { current += '"'; i++; } // escaped quote
+      else inQuotes = !inQuotes;
+    } else if (ch === ',' && !inQuotes) {
+      values.push(current.trim());
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  values.push(current.trim());
+  return values;
+};
+
 export const parseCSV = (text) => {
   const lines = text.trim().split('\n').filter(Boolean);
   if (lines.length < 2) throw new Error('CSV must have a header row and at least one data row');
 
-  const keys = lines[0].split(',').map((k) => k.trim().toLowerCase());
+  const keys = parseCSVLine(lines[0]).map((k) => k.toLowerCase());
   const required = ['date', 'description', 'category', 'amount', 'type'];
   const missing = required.filter((k) => !keys.includes(k));
   if (missing.length) throw new Error(`Missing columns: ${missing.join(', ')}`);
@@ -13,7 +34,7 @@ export const parseCSV = (text) => {
   const errors = [];
 
   lines.slice(1).forEach((line, i) => {
-    const values = line.split(',').map((v) => v.trim());
+    const values = parseCSVLine(line);
     const row = Object.fromEntries(keys.map((k, idx) => [k, values[idx] ?? '']));
 
     const amount = parseFloat(row.amount);

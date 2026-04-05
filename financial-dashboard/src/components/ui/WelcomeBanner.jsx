@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MousePointerClick, Bell, Target, PieChart, RefreshCw, LayoutDashboard } from 'lucide-react';
+import { X, MousePointerClick, Bell, Target, PieChart, RefreshCw, LayoutDashboard, HardDrive } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 
 const STORAGE_KEY = 'fd_welcome_dismissed';
@@ -47,6 +47,13 @@ const features = [
     bg: 'bg-indigo-50 dark:bg-indigo-900/20',
     title: 'Customise your dashboard',
     desc: 'Use the ⚙ gear icon in the header to show or hide any dashboard widget. Preference is saved.',
+  },
+  {
+    icon: HardDrive,
+    color: 'text-teal-500',
+    bg: 'bg-teal-50 dark:bg-teal-900/20',
+    title: 'Your data stays private',
+    desc: 'Everything is saved in your browser\'s localStorage — no backend, no account. Data persists across refreshes but is private to your device.',
   },
 ];
 
@@ -101,7 +108,7 @@ export default function WelcomeBanner() {
             </div>
 
             {/* Feature grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
               {features.map(({ icon: Icon, color, bg, title, desc }) => (
                 <div key={title} className="flex items-start gap-3 bg-white/60 dark:bg-gray-900/40 rounded-xl p-3 backdrop-blur-sm">
                   <div className={`p-1.5 rounded-lg shrink-0 ${bg}`}>

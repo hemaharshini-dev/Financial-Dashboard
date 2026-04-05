@@ -158,7 +158,7 @@ All optional enhancements from the spec were implemented, plus several additiona
 | Enhancement | Details |
 |---|---|
 | ✅ Dark mode | System preference on first load; toggled via header; persisted |
-| ✅ localStorage persistence | All data survives refresh — transactions, budgets, assets, role, preferences |
+| ✅ localStorage persistence | All data is stored in your browser's localStorage — no backend, no account needed. Your data is private to your browser and persists across page refreshes — transactions, budgets, assets, role, preferences |
 | ✅ Export CSV + JSON | RFC 4180 quoted CSV with notes and recurring columns |
 | ✅ Import CSV | RFC 4180 parser, row-level validation, error reporting |
 | ✅ Advanced filtering | Multi-select categories, date range, type, sort — all combinable |

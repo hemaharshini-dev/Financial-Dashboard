@@ -80,17 +80,17 @@ export default function AddEditModal({ isOpen, onClose, transaction }) {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
           <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md p-6 z-10"
+            className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] flex flex-col z-10"
             role="dialog" aria-modal="true" aria-labelledby="modal-title"
             onKeyDown={handleKeyDown}
           >
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between p-6 pb-5 shrink-0">
               <h2 id="modal-title" className="text-lg font-semibold text-gray-900 dark:text-white">
                 {transaction ? 'Edit Transaction' : 'Add Transaction'}
               </h2>
               <button onClick={onClose} aria-label="Close modal" className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><X size={18} /></button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="overflow-y-auto px-6 pb-6 space-y-4">
               {field('Date', 'date', 'date', firstFieldRef)}
               {field('Description', 'description')}
               {field('Amount (₹)', 'amount', 'number')}

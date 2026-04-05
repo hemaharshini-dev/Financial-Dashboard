@@ -33,14 +33,14 @@ export default function Header({ activePage, setActivePage }) {
   }, []);
 
   return (
-    <header className="h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/60 dark:border-gray-800/60 flex items-center justify-between px-6 sticky top-0 z-40">
-      <div className="flex items-center gap-2.5">
+    <header className="h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/60 dark:border-gray-800/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40">
+      <div className="flex items-center gap-2">
         <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/30">
           <PageIcon size={16} className="text-blue-500 dark:text-blue-400" />
         </div>
-        <h1 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h1>
+        <h1 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">{title}</h1>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 md:gap-3">
         <AlertsPanel />
         <button
           onClick={() => { openGuide(); setActivePage('dashboard'); }}

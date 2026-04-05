@@ -22,7 +22,7 @@ export default function RoleSwitcher() {
         <button
           key={id}
           onClick={() => handleSwitch(id)}
-          className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+          className={`relative flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
             role === id
               ? id === 'admin'
                 ? 'bg-blue-600 text-white shadow-sm shadow-blue-200 dark:shadow-blue-900/50'
@@ -31,7 +31,7 @@ export default function RoleSwitcher() {
           }`}
         >
           <Icon size={13} />
-          {label}
+          <span className="hidden sm:inline">{label}</span>
         </button>
       ))}
     </div>

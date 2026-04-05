@@ -24,7 +24,7 @@ export default function Sidebar({ activePage, setActivePage }) {
       <motion.aside
         animate={{ width: sidebarCollapsed ? 64 : 240 }}
         transition={{ duration: 0.25, ease: 'easeInOut' }}
-        className="hidden md:flex flex-col min-h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 py-6 gap-1 overflow-visible shrink-0 relative"
+        className="hidden md:flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 py-6 gap-1 overflow-visible shrink-0 relative"
       >
         {/* Edge toggle button — always in the same spot on the right border */}
         <button

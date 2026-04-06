@@ -3,6 +3,7 @@ import TopSpendingCard from './TopSpendingCard';
 import MonthlyComparison from './MonthlyComparison';
 import SavingsRate from './SavingsRate';
 import BudgetGoals from './BudgetGoals';
+import ExpensePeriodCard from './ExpensePeriodCard';
 import { useInsightsContext } from '../../context/InsightsContext';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { CATEGORY_COLORS } from '../../data/mockData';
@@ -60,6 +61,9 @@ export default function InsightsPanel() {
         </motion.div>
       </div>
       <motion.div {...fadeUp(5)}>
+        <ExpensePeriodCard />
+      </motion.div>
+      <motion.div {...fadeUp(6)}>
         <BudgetGoals />
       </motion.div>
     </div>

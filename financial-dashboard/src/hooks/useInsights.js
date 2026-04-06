@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTransactionStore } from '../store/useTransactionStore';
-import { format, parseISO, subMonths, differenceInDays } from 'date-fns';
+import { format, parseISO, subMonths, subWeeks, startOfWeek, differenceInDays } from 'date-fns';
 
 // ─── derived primitives ────────────────────────────────────────────────────
 
@@ -52,6 +52,44 @@ function useBalanceTrend(transactions, latestDate) {
   }, [transactions, latestDate]);
 }
 
+function usePeriodExpenses(transactions, latestDate) {
+  return useMemo(() => {
+    const expenses = transactions.filter((t) => t.type === 'expense');
+
+    // Daily — last 7 days
+    const daily = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(latestDate);
+      d.setDate(d.getDate() - (6 - i));
+      const key = format(d, 'yyyy-MM-dd');
+      const label = format(d, 'EEE dd');
+      const total = expenses.filter((t) => t.date === key).reduce((s, t) => s + t.amount, 0);
+      return { label, total };
+    });
+
+    // Weekly — last 6 weeks
+    const weekly = Array.from({ length: 6 }, (_, i) => {
+      const weekStart = startOfWeek(subWeeks(latestDate, 5 - i), { weekStartsOn: 1 });
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+      const label = format(weekStart, 'dd MMM');
+      const total = expenses
+        .filter((t) => { const d = parseISO(t.date); return d >= weekStart && d <= weekEnd; })
+        .reduce((s, t) => s + t.amount, 0);
+      return { label, total };
+    });
+
+    // Monthly — last 6 months
+    const monthly = Array.from({ length: 6 }, (_, i) => {
+      const month = format(subMonths(latestDate, 5 - i), 'yyyy-MM');
+      const label = format(subMonths(latestDate, 5 - i), 'MMM yy');
+      const total = expenses.filter((t) => t.date.startsWith(month)).reduce((s, t) => s + t.amount, 0);
+      return { label, total };
+    });
+
+    return { daily, weekly, monthly };
+  }, [transactions, latestDate]);
+}
+
 function useSpendingStreak(transactions) {
   return useMemo(() => {
     const largeExpenses = transactions
@@ -71,6 +109,7 @@ export const useInsights = () => {
   const { categoryTotals, allTimeCategoryTotals } = useCategoryTotals(transactions, thisMonth);
   const balanceTrend = useBalanceTrend(transactions, latestDate);
   const spendingStreak = useSpendingStreak(transactions);
+  const periodExpenses = usePeriodExpenses(transactions, latestDate);
 
   const { top3Categories, topCategory, totalExpenses, savingsRate, spendingForecast } = useMemo(() => {
     const top3 = Object.entries(allTimeCategoryTotals)
@@ -110,5 +149,6 @@ export const useInsights = () => {
     monthlyComparison: { thisMonthIncome, thisMonthExpenses, lastMonthIncome, lastMonthExpenses },
     categoryTotals,
     allTimeCategoryTotals,
+    periodExpenses,
   };
 };

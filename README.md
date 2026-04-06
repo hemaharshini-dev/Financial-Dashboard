@@ -34,10 +34,10 @@ cd financial-dashboard
 cp .env.example .env
 ```
 
-| Variable               | Default   | Description                                      |
-| ---------------------- | --------- | ------------------------------------------------ |
-| `VITE_APP_TITLE`       | `FinDash` | App title shown in the browser tab               |
-| `VITE_ENABLE_MOCK_DELAY` | `false` | Set to `true` to simulate async loading delays   |
+| Variable                 | Default   | Description                                    |
+| ------------------------ | --------- | ---------------------------------------------- |
+| `VITE_APP_TITLE`         | `FinDash` | App title shown in the browser tab             |
+| `VITE_ENABLE_MOCK_DELAY` | `false`   | Set to `true` to simulate async loading delays |
 
 All variables are prefixed with `VITE_` so Vite exposes them to the client bundle. The app works out of the box with the defaults — `.env` is optional unless you want to override them.
 
@@ -93,7 +93,7 @@ Full transaction management with filtering, sorting, and export.
 
 ### Insights
 
-![Insights Page](./assets/insightsPage.jpeg)
+![Insights Page](./financial-dashboard/assets/insightsPage.jpeg)
 
 Computed insights derived entirely from transaction data — nothing is hardcoded.
 

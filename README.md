@@ -1,6 +1,6 @@
 # Spendlytic — Financial Dashboard
 
-A clean, interactive financial dashboard built with React + Vite. Track transactions, visualize spending patterns, set budget goals, and monitor net worth — with role-based access, dark mode, animations, and full localStorage persistence. All amounts are in Indian Rupees (₹).
+A clean, interactive financial dashboard built with React + Vite. Track transactions, visualize spending patterns, set budget goals, and monitor net worth — with role-based access, dark mode, animations, a guided tour, a spending assistant chatbot, and full localStorage persistence. All amounts are in Indian Rupees (₹).
 
 ![Spendlytic Demo](./financial-dashboard/assets/demo.gif)
 
@@ -45,16 +45,17 @@ All variables are prefixed with `VITE_` so Vite exposes them to the client bundl
 
 ## Tech Stack
 
-| Tool                 | Reason                                                             |
-| -------------------- | ------------------------------------------------------------------ |
-| React 19 + Vite      | Fast dev server, modern React features                             |
-| Tailwind CSS v4      | Utility-first styling, dark mode via `class` strategy              |
-| Recharts             | Composable, responsive charts with dark mode support               |
-| Zustand              | Minimal boilerplate state management with localStorage persistence |
-| Framer Motion        | Animations — stagger, count-up, hover lift, page transitions       |
-| Lucide React         | Consistent icon set                                                |
-| date-fns             | Lightweight date formatting and arithmetic                         |
-| Inter (Google Fonts) | Clean, readable UI typography                                      |
+| Tool                 | Version  | Reason                                                             |
+| -------------------- | -------- | ------------------------------------------------------------------ |
+| React                | 19.2     | Fast dev server, modern React features                             |
+| Vite                 | 8.0      | Near-instant HMR, lightweight build tooling                        |
+| Tailwind CSS         | v4.2     | Utility-first styling, dark mode via `class` strategy              |
+| Recharts             | 3.8      | Composable, responsive charts (line, area, bar, donut)             |
+| Zustand              | 5.0      | Minimal boilerplate state management with localStorage persistence |
+| Framer Motion        | 12.38    | Animations — stagger, count-up, hover lift, page transitions       |
+| Lucide React         | 1.7      | Consistent icon set                                                |
+| date-fns             | 4.1      | Lightweight date formatting and arithmetic                         |
+| Inter (Google Fonts) | —        | Clean, readable UI typography                                      |
 
 ---
 
@@ -67,7 +68,7 @@ All variables are prefixed with `VITE_` so Vite exposes them to the client bundl
 The main overview page. Everything updates live as transactions change.
 
 - **Summary cards** — Total Balance, Monthly Income, Monthly Expenses, Savings Rate with ↑/↓ trend vs last month
-- **Income vs Expenses chart** — stacked area chart across 6 months with net callout
+- **Income vs Expenses chart** — line chart across 6 months with dot markers and 6-month net callout
 - **Spending Breakdown** — donut chart; click any slice to jump to Transactions filtered by that category
 - **Quick stats** — largest expense this month, most active category, projected month-end spend
 - **Recurring Transactions** — Done ✓ / Pending status per item; total monthly commitments
@@ -103,6 +104,29 @@ Computed insights derived entirely from transaction data — nothing is hardcode
 - **Monthly Comparison** — bar chart comparing current vs previous month with % change callout
 - **Top 3 Categories** — ranked with relative progress bars
 - **Budget Goals** — per-category monthly limits with green → amber → red status; Admin edits inline
+
+---
+
+## Guided Tour
+
+A step-by-step interactive tour runs automatically on first visit. It highlights each key UI element with a spotlight overlay and a positioned tooltip card.
+
+- 7 steps covering: Dashboard, Transactions, Insights navigation, Role Switcher, Smart Alerts, Dark Mode, and Widget Customisation
+- Blue ring spotlights the active element; rest of the screen is dimmed
+- Progress dots, Back / Next / Done navigation
+- Click **"Take a Tour"** in the header at any time to restart the tour
+- Tour completion is stored in localStorage — auto-start only happens once per browser
+
+---
+
+## Spending Assistant (Chatbot)
+
+A floating chatbot in the bottom-right corner answers natural language questions about your finances, powered entirely by your transaction data — no external API.
+
+- Ask questions like "What's my savings rate?", "How much did I spend this month?", "Show budget status", "Forecast month-end spend"
+- Pre-loaded suggestion chips for quick access
+- Responds with computed values from the same `useInsights` hook used across the app
+- Violet floating button; panel slides up with smooth animation
 
 ---
 
@@ -171,12 +195,10 @@ Invalid rows are skipped and reported in the toast. The exported CSV can be re-i
 
 ## Optional Enhancements Implemented
 
-All optional enhancements from the spec were implemented, plus several additional ones:
-
 | Enhancement                 | Details                                                                                                                                                                                                       |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ✅ Dark mode                | System preference on first load; toggled via header; persisted                                                                                                                                                |
-| ✅ localStorage persistence | All data is stored in your browser's localStorage — no backend, no account needed. Your data is private to your browser and persists across page refreshes — transactions, budgets, assets, role, preferences |
+| ✅ localStorage persistence | All data stored in your browser — no backend, no account. Persists across refreshes                                                                                                                           |
 | ✅ Export CSV + JSON        | RFC 4180 quoted CSV with notes and recurring columns                                                                                                                                                          |
 | ✅ Import CSV               | RFC 4180 parser, row-level validation, error reporting                                                                                                                                                        |
 | ✅ Advanced filtering       | Multi-select categories, date range, type, sort — all combinable                                                                                                                                              |
@@ -188,11 +210,13 @@ All optional enhancements from the spec were implemented, plus several additiona
 | ✅ Smart Alerts             | Auto-derived from savings rate, spending trends, budget overruns                                                                                                                                              |
 | ✅ Collapsible Sidebar      | Edge toggle, icon-only collapsed state with tooltips                                                                                                                                                          |
 | ✅ Customizable Widgets     | Show/hide 6 dashboard sections, persisted                                                                                                                                                                     |
-| ✅ Onboarding Guide         | First-visit inline banner, re-openable via `?` in header                                                                                                                                                      |
+| ✅ Guided Tour              | Auto-starts on first visit; 7-step spotlight tour; restartable via "Take a Tour" button in header                                                                                                             |
+| ✅ Spending Assistant       | Floating chatbot answers natural language finance questions from live transaction data                                                                                                                        |
 | ✅ Keyboard shortcuts       | `N` to add transaction, `Escape` to close modal                                                                                                                                                               |
 | ✅ Drill-down navigation    | Pie chart slice → Transactions filtered by category                                                                                                                                                           |
 | ✅ Error boundaries         | Crash recovery without taking down the whole app                                                                                                                                                              |
 | ✅ Hash-based routing       | Deep-linking — refresh restores the correct page                                                                                                                                                              |
+| ✅ Line chart               | Income vs Expenses rendered as a line chart with dot markers and 6-month net callout                                                                                                                          |
 
 ---
 
@@ -210,17 +234,17 @@ Realistic Indian pricing and merchant names (Ola, Rapido, PVR, Wonderla, Barbequ
 src/
 ├── components/
 │   ├── layout/       # Sidebar, Header, Layout, AlertsPanel
-│   ├── dashboard/    # SummaryCards, BalanceTrendChart, SpendingBreakdown,
+│   ├── dashboard/    # SummaryCards, BalanceTrendChart (line chart), SpendingBreakdown,
 │   │                 # RecurringList, NetWorthCard
 │   ├── transactions/ # TransactionTable, TransactionRow, TransactionFilters, AddEditModal
 │   ├── insights/     # InsightsPanel, TopSpendingCard, MonthlyComparison,
 │   │                 # SavingsRate, BudgetGoals
 │   └── ui/           # Badge, EmptyState, RoleSwitcher, Toast, Skeleton,
-│                     # ErrorBoundary, WelcomeBanner
+│                     # ErrorBoundary, WelcomeBanner, TourTooltip, Chatbot
 ├── context/          # InsightsContext — shared computed insights per page
 ├── store/            # useTransactionStore, useAppStore, useBudgetStore, useNetWorthStore
 ├── data/             # mockData.js — 60 transactions, auto-hash versioning
-├── hooks/            # useFilteredTransactions, useInsights (5 sub-hooks), useAlerts
+├── hooks/            # useFilteredTransactions, useInsights (5 sub-hooks), useAlerts, useChatbot
 ├── utils/            # formatCurrency, formatDate, exportData, importData
 └── pages/            # Dashboard, Transactions, Insights
 ```
@@ -241,6 +265,15 @@ Only 3 pages. Hash-based routing (`window.location.hash`) achieves deep-linking 
 **Why split useInsights into 5 sub-hooks?**
 A single `useMemo([transactions])` recalculates everything on every change. Splitting into `useDateAnchors`, `useMonthlyTotals`, `useCategoryTotals`, `useBalanceTrend`, `useSpendingStreak` means each only re-runs when its specific inputs change.
 
+**Why a line chart instead of area chart for Income vs Expenses?**
+A line chart with dot markers communicates discrete monthly data points more clearly than filled areas, which can visually imply continuity between months. The dots make each month's value immediately readable.
+
+**Why a custom tour instead of a library like Shepherd.js or Intro.js?**
+The tour is ~150 lines using Framer Motion (already a dependency) and `getBoundingClientRect`. Adding a dedicated tour library (~30–80KB) would be disproportionate. The custom implementation gives full control over spotlight shape, animation, and positioning logic.
+
+**Why a local chatbot instead of an API-backed one?**
+The app is entirely frontend with no backend. The chatbot (`useChatbot`) pattern-matches questions against computed insights from `useInsights` — the same data already available in the app. This gives instant, accurate responses with zero latency and no API key requirements.
+
 **Why mock data anchored to June 2025?**
 If mock data used today's date, charts and insights would show empty data for most of the year. Anchoring to the latest transaction date means everything always shows meaningful data regardless of when the app is opened.
 
@@ -253,3 +286,4 @@ The parser is ~25 lines and handles all needed edge cases (quoted fields, escape
 - `DEFAULT_FILTERS` constant in `useTransactionStore` — single source of truth, no duplication
 - `formatCurrency` guards against `NaN` — corrupted localStorage data shows `₹0` not `₹NaN`
 - `ErrorBoundary` wraps all pages — a crash shows "Try again" without taking down the whole app
+- `data-tour` attributes on UI elements — tour targeting is decoupled from class names or DOM structure, making it resilient to styling changes

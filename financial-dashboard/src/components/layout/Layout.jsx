@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import Chatbot from '../ui/Chatbot';
 
 export default function Layout({ activePage, setActivePage, children }) {
   return (
@@ -22,6 +23,7 @@ export default function Layout({ activePage, setActivePage, children }) {
           </AnimatePresence>
         </main>
       </div>
+      <Chatbot />
     </div>
   );
 }

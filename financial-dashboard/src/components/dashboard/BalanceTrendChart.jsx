@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useInsightsContext } from '../../context/InsightsContext';
 import { useAppStore } from '../../store/useAppStore';
 import { TrendingUp } from 'lucide-react';
@@ -33,17 +33,7 @@ export default function BalanceTrendChart() {
         </div>
       </div>
       <ResponsiveContainer width="100%" height={220}>
-        <AreaChart data={balanceTrend} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-          <defs>
-            <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
-              <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
-            </linearGradient>
-            <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ef4444" stopOpacity={0.35} />
-              <stop offset="100%" stopColor="#ef4444" stopOpacity={0.02} />
-            </linearGradient>
-          </defs>
+        <LineChart data={balanceTrend} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="0" stroke={gridColor} vertical={false} />
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} axisLine={false} tickLine={false} width={45} />
@@ -54,9 +44,9 @@ export default function BalanceTrendChart() {
             itemStyle={{ fontSize: 12 }}
           />
           <Legend iconType="circle" iconSize={7} wrapperStyle={{ paddingTop: 12 }} formatter={(v) => <span style={{ fontSize: 12, color: '#9ca3af' }}>{v.charAt(0).toUpperCase() + v.slice(1)}</span>} />
-          <Area type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2.5} fill="url(#incomeGrad)" dot={false} activeDot={{ r: 5, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }} />
-          <Area type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2.5} fill="url(#expenseGrad)" dot={false} activeDot={{ r: 5, fill: '#ef4444', strokeWidth: 2, stroke: '#fff' }} />
-        </AreaChart>
+          <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2.5} dot={{ r: 4, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }} />
+          <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2.5} dot={{ r: 4, fill: '#ef4444', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6, fill: '#ef4444', strokeWidth: 2, stroke: '#fff' }} />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );

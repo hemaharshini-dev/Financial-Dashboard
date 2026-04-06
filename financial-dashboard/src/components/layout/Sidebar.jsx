@@ -67,6 +67,7 @@ export default function Sidebar({ activePage, setActivePage }) {
                 <button
                   onClick={() => setActivePage(id)}
                   aria-label={label}
+                  data-tour={`sidebar-${id}`}
                   className={`w-full flex items-center py-2.5 rounded-lg text-sm font-medium transition-all ${
                     sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3'
                   } ${

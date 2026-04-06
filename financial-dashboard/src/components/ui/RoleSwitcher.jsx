@@ -14,7 +14,7 @@ export default function RoleSwitcher() {
   };
 
   return (
-    <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+    <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1" data-tour="role-switcher">
       {[
         { id: 'viewer', Icon: Eye, label: 'Viewer' },
         { id: 'admin',  Icon: ShieldCheck, label: 'Admin' },

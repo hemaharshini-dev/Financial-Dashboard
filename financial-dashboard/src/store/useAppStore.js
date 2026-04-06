@@ -52,4 +52,10 @@ export const useAppStore = create((set) => ({
   showGuide: false,
   openGuide: () => set({ showGuide: true }),
   closeGuide: () => set({ showGuide: false }),
+
+  tourActive: false,
+  tourStep: 0,
+  startTour: () => set({ tourActive: true, tourStep: 0 }),
+  endTour: () => set({ tourActive: false, tourStep: 0 }),
+  setTourStep: (step) => set({ tourStep: step }),
 }));

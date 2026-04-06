@@ -34,6 +34,7 @@ export default function AlertsPanel() {
         onClick={() => setOpen((o) => !o)}
         className="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         aria-label={`Alerts — ${visible.length} active`}
+        data-tour="alerts-bell"
       >
         <Bell size={18} />
         {visible.length > 0 && (

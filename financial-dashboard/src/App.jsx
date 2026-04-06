@@ -4,6 +4,7 @@ import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Insights from './pages/Insights';
+import TourTooltip from './components/ui/TourTooltip';
 import { ToastProvider } from './components/ui/Toast';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
@@ -49,6 +50,7 @@ export default function App() {
           <Page setActivePage={setActivePage} />
         </ErrorBoundary>
       </Layout>
+      <TourTooltip />
     </ToastProvider>
   );
 }

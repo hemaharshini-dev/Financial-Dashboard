@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Settings, LayoutDashboard, ArrowLeftRight, Lightbulb, HelpCircle } from 'lucide-react';
+import { Sun, Moon, Settings, LayoutDashboard, ArrowLeftRight, Lightbulb } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import RoleSwitcher from '../ui/RoleSwitcher';
 import AlertsPanel from './AlertsPanel';
@@ -21,7 +21,7 @@ const widgetLabels = {
 };
 
 export default function Header({ activePage, setActivePage }) {
-  const { darkMode, toggleDarkMode, widgets, toggleWidget, openGuide } = useAppStore();
+  const { darkMode, toggleDarkMode, widgets, toggleWidget, openGuide, startTour } = useAppStore();
   const [showCustomize, setShowCustomize] = useState(false);
   const customizeRef = useRef(null);
   const { title, Icon: PageIcon } = pageConfig[activePage] || pageConfig.dashboard;
@@ -43,11 +43,12 @@ export default function Header({ activePage, setActivePage }) {
       <div className="flex items-center gap-1.5 md:gap-3">
         <AlertsPanel />
         <button
-          onClick={() => { openGuide(); setActivePage('dashboard'); }}
-          className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          aria-label="Open feature guide"
+          onClick={startTour}
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+          aria-label="Take a tour"
+          data-tour="help-btn"
         >
-          <HelpCircle size={18} />
+          Take a Tour
         </button>
         {activePage === 'dashboard' && (
           <div className="relative" ref={customizeRef}>
@@ -55,6 +56,7 @@ export default function Header({ activePage, setActivePage }) {
               onClick={() => setShowCustomize((o) => !o)}
               className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               aria-label="Customize dashboard"
+              data-tour="customize-widgets"
             >
               <Settings size={18} />
             </button>
@@ -89,6 +91,7 @@ export default function Header({ activePage, setActivePage }) {
           onClick={toggleDarkMode}
           className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           aria-label="Toggle dark mode"
+          data-tour="dark-mode"
         >
           {darkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>

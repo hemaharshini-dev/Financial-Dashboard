@@ -1,26 +1,48 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useInsightsContext } from '../../context/InsightsContext';
+import { useTransactionStore } from '../../store/useTransactionStore';
 import { useAppStore } from '../../store/useAppStore';
 import { format, subMonths } from 'date-fns';
-import { BarChart2 } from 'lucide-react';
+import { BarChart2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function MonthlyComparison() {
-  const { monthlyComparison, latestDate } = useInsightsContext();
+  const { latestDate } = useInsightsContext();
+  const { transactions } = useTransactionStore();
   const { darkMode } = useAppStore();
-  const anchor = latestDate || new Date();
+  const [offset, setOffset] = useState(0);
+
+  const base = latestDate || new Date();
+  // current viewed month shifts by offset; 0 = latestDate, -1 = one month back, etc.
+  const currentMonth = subMonths(base, offset);
+  const prevMonth = subMonths(base, offset + 1);
+  const currentKey = format(currentMonth, 'yyyy-MM');
+  const prevKey = format(prevMonth, 'yyyy-MM');
+
+  const sum = (type, key) =>
+    transactions.filter((t) => t.type === type && t.date.startsWith(key)).reduce((s, t) => s + t.amount, 0);
+
+  const thisIncome = sum('income', currentKey);
+  const thisExpenses = sum('expense', currentKey);
+  const lastIncome = sum('income', prevKey);
+  const lastExpenses = sum('expense', prevKey);
+
+  const data = [
+    { month: format(prevMonth, 'MMM yyyy'), income: lastIncome, expenses: lastExpenses },
+    { month: format(currentMonth, 'MMM yyyy'), income: thisIncome, expenses: thisExpenses },
+  ];
+
+  const expenseDiff = thisExpenses - lastExpenses;
+  const expenseDiffPct = lastExpenses > 0 ? Math.round(Math.abs(expenseDiff / lastExpenses) * 100) : 0;
+
+  // can't go forward past latestDate
+  const canGoForward = offset > 0;
+  // stop going back when both months have no data
+  const canGoBack = transactions.some((t) => t.date.startsWith(format(subMonths(base, offset + 2), 'yyyy-MM')));
+
   const gridColor = darkMode ? '#1f2937' : '#f3f4f6';
   const tooltipBg = darkMode ? '#111827' : '#ffffff';
   const tooltipBorder = darkMode ? '#374151' : '#e5e7eb';
-
-  const data = [
-    { month: format(subMonths(anchor, 1), 'MMM yyyy'), income: monthlyComparison.lastMonthIncome, expenses: monthlyComparison.lastMonthExpenses },
-    { month: format(anchor, 'MMM yyyy'), income: monthlyComparison.thisMonthIncome, expenses: monthlyComparison.thisMonthExpenses },
-  ];
-
-  const expenseDiff = monthlyComparison.thisMonthExpenses - monthlyComparison.lastMonthExpenses;
-  const expenseDiffPct = monthlyComparison.lastMonthExpenses > 0
-    ? Math.round(Math.abs(expenseDiff / monthlyComparison.lastMonthExpenses) * 100)
-    : 0;
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 h-full">
@@ -30,16 +52,34 @@ export default function MonthlyComparison() {
             <BarChart2 size={16} className="text-blue-500" />
             <h2 className="text-base font-semibold text-gray-900 dark:text-white">Monthly Comparison</h2>
           </div>
-          <p className="text-xs text-gray-400 ml-6">{format(subMonths(anchor, 1), 'MMM')} vs {format(anchor, 'MMM yyyy')}</p>
+          <p className="text-xs text-gray-400 ml-6">{format(prevMonth, 'MMM')} vs {format(currentMonth, 'MMM yyyy')}</p>
         </div>
-        {expenseDiffPct > 0 && (
-          <div className="text-right">
-            <p className="text-xs text-gray-400 mb-0.5">Expenses</p>
-            <p className={`text-sm font-bold ${expenseDiff > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
-              {expenseDiff > 0 ? '↑' : '↓'} {expenseDiffPct}% vs last month
-            </p>
-          </div>
-        )}
+        <div className="flex items-center gap-1">
+          {expenseDiffPct > 0 && (
+            <div className="text-right mr-3">
+              <p className="text-xs text-gray-400 mb-0.5">Expenses</p>
+              <p className={`text-sm font-bold ${expenseDiff > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
+                {expenseDiff > 0 ? '↑' : '↓'} {expenseDiffPct}% vs prev
+              </p>
+            </div>
+          )}
+          <button
+            onClick={() => setOffset((o) => o + 1)}
+            disabled={!canGoBack}
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Previous month"
+          >
+            <ChevronLeft size={16} className="text-gray-500 dark:text-gray-400" />
+          </button>
+          <button
+            onClick={() => setOffset((o) => o - 1)}
+            disabled={!canGoForward}
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Next month"
+          >
+            <ChevronRight size={16} className="text-gray-500 dark:text-gray-400" />
+          </button>
+        </div>
       </div>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }} barGap={4}>

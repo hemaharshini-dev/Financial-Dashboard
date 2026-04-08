@@ -2,6 +2,8 @@
 
 A clean, interactive financial dashboard built with React + Vite. Track transactions, visualize spending patterns, set budget goals, and monitor net worth — with role-based access, dark mode, animations, a guided tour, a spending assistant chatbot, and full localStorage persistence. All amounts are in Indian Rupees (₹).
 
+🚀 **Live Demo:** [https://spendlytic-live.vercel.app/](https://spendlytic-live.vercel.app/)
+
 ![Spendlytic Demo](./financial-dashboard/assets/demo.gif)
 
 ---
